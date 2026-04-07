@@ -27,7 +27,7 @@ struct PremiumView: View {
 
                 // Features
                 VStack(alignment: .leading, spacing: 16) {
-                    premiumFeature(icon: "diagram", title: "ER Diagram Builder", subtitle: "Interactive drag-and-drop entity diagrams")
+                    premiumFeature(icon: "rectangle.3.group", title: "ER Diagram Builder", subtitle: "Interactive drag-and-drop entity diagrams")
                     premiumFeature(icon: "infinity", title: "Unlimited Mock OAs", subtitle: "Unlimited full-length practice exams")
                     premiumFeature(icon: "chart.bar.fill", title: "Advanced Analytics", subtitle: "Detailed performance insights by topic")
                     premiumFeature(icon: "star.fill", title: "Priority Content", subtitle: "Early access to new study materials")

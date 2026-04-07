@@ -10,7 +10,7 @@ struct DataSeeder {
 
         // MARK: - Topics
         let relationalModel = Topic(name: "Relational Model Concepts", competencyCode: "D426-C1", iconName: "circle.grid.3x3.fill", colorHex: "007AFF")
-        let erDiagrams = Topic(name: "ER Diagrams & Crow's Foot", competencyCode: "D426-C2", iconName: "diagram", colorHex: "00C7BE")
+        let erDiagrams = Topic(name: "ER Diagrams & Crow's Foot", competencyCode: "D426-C2", iconName: "rectangle.3.group", colorHex: "00C7BE")
         let keys = Topic(name: "Primary & Foreign Keys", competencyCode: "D426-C3", iconName: "key.fill", colorHex: "FFD60A")
         let normalization = Topic(name: "Normalization 1NF-BCNF", competencyCode: "D426-C4", iconName: "chart.bar.fill", colorHex: "FF6B6B")
         let ddl = Topic(name: "SQL DDL Commands", competencyCode: "D426-C5", iconName: "hammer.fill", colorHex: "AF52DE")

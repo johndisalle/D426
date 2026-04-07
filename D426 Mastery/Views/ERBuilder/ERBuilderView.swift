@@ -126,7 +126,7 @@ struct ERBuilderView: View {
 
             if entities.isEmpty {
                 VStack(spacing: 12) {
-                    Image(systemName: "diagram")
+                    Image(systemName: "rectangle.3.group")
                         .font(.system(size: 48))
                         .foregroundStyle(.secondary)
                     Text("Tap + to add entities")

@@ -63,7 +63,7 @@ struct MoreView: View {
                 NavigationLink {
                     ERBuilderView()
                 } label: {
-                    Label("ER Diagram Builder", systemImage: "diagram")
+                    Label("ER Diagram Builder", systemImage: "rectangle.3.group")
                 }
 
                 NavigationLink {
