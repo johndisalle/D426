@@ -135,10 +135,9 @@ struct DashboardView: View {
     }
 
     private var accuracy: String {
-        guard progress.totalCorrectAnswers > 0, progress.totalQuizzesTaken > 0 else { return "—" }
-        // Use totalCorrectAnswers / (totalQuizzesTaken * average_questions) approximation
-        // More accurate: track total questions answered
-        return "\(min(100, Int(Double(progress.totalCorrectAnswers) / max(1, Double(progress.totalQuizzesTaken * 25)) * 100)))%"
+        guard progress.totalQuestionsAnswered > 0 else { return "—" }
+        let pct = Double(progress.totalCorrectAnswers) / Double(progress.totalQuestionsAnswered) * 100
+        return "\(Int(pct))%"
     }
 
     // MARK: - Radar

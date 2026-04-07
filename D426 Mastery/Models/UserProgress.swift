@@ -12,6 +12,7 @@ final class UserProgress {
     var totalCardsReviewed: Int
     var totalQuizzesTaken: Int
     var totalCorrectAnswers: Int
+    var totalQuestionsAnswered: Int
     var onboardingCompleted: Bool
 
     init() {
@@ -23,6 +24,7 @@ final class UserProgress {
         self.totalCardsReviewed = 0
         self.totalQuizzesTaken = 0
         self.totalCorrectAnswers = 0
+        self.totalQuestionsAnswered = 0
         self.onboardingCompleted = false
     }
 

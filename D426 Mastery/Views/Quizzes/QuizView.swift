@@ -417,6 +417,7 @@ struct QuizSessionView: View {
             if let progress {
                 progress.totalQuizzesTaken += 1
                 progress.totalCorrectAnswers += correctCount
+                progress.totalQuestionsAnswered += questions.count
                 progress.quizzesTakenToday += 1
                 progress.updateStreak()
             }

@@ -208,8 +208,8 @@ struct StatsView: View {
     }
 
     private var accuracyText: String {
-        guard progress.totalQuizzesTaken > 0 else { return "—" }
-        let pct = Double(progress.totalCorrectAnswers) / Double(progress.totalQuizzesTaken) * 100
+        guard progress.totalQuestionsAnswered > 0 else { return "—" }
+        let pct = Double(progress.totalCorrectAnswers) / Double(progress.totalQuestionsAnswered) * 100
         return "\(Int(pct))%"
     }
 
