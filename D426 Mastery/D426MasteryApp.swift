@@ -25,7 +25,12 @@ struct D426MasteryApp: App {
             ContentView()
                 .preferredColorScheme(.dark)
                 .onAppear {
-                    DataSeeder.seedIfNeeded(context: sharedModelContainer.mainContext)
+                    let ctx = sharedModelContainer.mainContext
+                    DataSeeder.seedIfNeeded(context: ctx)
+                    // Reset daily counters if new day
+                    if let progress = try? ctx.fetch(FetchDescriptor<UserProgress>()).first {
+                        progress.resetDailyIfNeeded()
+                    }
                 }
         }
         .modelContainer(sharedModelContainer)

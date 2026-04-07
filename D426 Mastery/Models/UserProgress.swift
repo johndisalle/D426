@@ -37,4 +37,13 @@ final class UserProgress {
         }
         lastStudyDate = .now
     }
+
+    /// Resets daily counters if the last study date is not today
+    func resetDailyIfNeeded() {
+        let calendar = Calendar.current
+        if let last = lastStudyDate, !calendar.isDateInToday(last) {
+            cardsReviewedToday = 0
+            quizzesTakenToday = 0
+        }
+    }
 }

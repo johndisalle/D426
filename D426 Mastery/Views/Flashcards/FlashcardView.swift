@@ -12,6 +12,8 @@ struct FlashcardStudyView: View {
     @State private var offset: CGSize = .zero
     @State private var selectedTopic: Topic?
     @State private var showTopicPicker = false
+    @State private var searchText = ""
+    @State private var showBrowser = false
 
     private var progress: UserProgress? { progressList.first }
 
@@ -59,15 +61,21 @@ struct FlashcardStudyView: View {
             .navigationTitle("Flashcards")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showTopicPicker.toggle()
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
+                    HStack(spacing: 12) {
+                        Button { showBrowser = true } label: {
+                            Image(systemName: "magnifyingglass")
+                        }
+                        Button { showTopicPicker.toggle() } label: {
+                            Image(systemName: "line.3.horizontal.decrease.circle")
+                        }
                     }
                 }
             }
             .sheet(isPresented: $showTopicPicker) {
                 topicPickerSheet
+            }
+            .sheet(isPresented: $showBrowser) {
+                flashcardBrowserSheet
             }
         }
     }
@@ -287,6 +295,48 @@ struct FlashcardStudyView: View {
     private func resetCard() {
         currentIndex = 0
         isFlipped = false
+    }
+
+    // MARK: - Flashcard Browser with Search
+    private var flashcardBrowserSheet: some View {
+        NavigationStack {
+            List {
+                let filtered = allCards.filter { card in
+                    searchText.isEmpty ||
+                    card.question.localizedCaseInsensitiveContains(searchText) ||
+                    card.answer.localizedCaseInsensitiveContains(searchText) ||
+                    card.tags.contains(where: { $0.localizedCaseInsensitiveContains(searchText) })
+                }
+
+                ForEach(filtered) { card in
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(card.question)
+                            .font(.subheadline.weight(.medium))
+                        Text(card.answer)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                        if let topic = card.topic {
+                            Text(topic.name)
+                                .font(.caption2)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color(hex: topic.colorHex).opacity(0.2))
+                                .clipShape(Capsule())
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+            .searchable(text: $searchText, prompt: "Search flashcards...")
+            .navigationTitle("All Flashcards")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { showBrowser = false }
+                }
+            }
+        }
     }
 }
 

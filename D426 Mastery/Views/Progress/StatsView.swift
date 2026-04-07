@@ -77,13 +77,40 @@ struct StatsView: View {
 
     // MARK: - Stats Grid
     private var statsGrid: some View {
-        LazyVGrid(columns: [.init(.flexible()), .init(.flexible())], spacing: 12) {
-            StatCard(title: "Cards Reviewed", value: "\(progress.totalCardsReviewed)", icon: "rectangle.stack.fill", color: .blue)
-            StatCard(title: "Quizzes Taken", value: "\(progress.totalQuizzesTaken)", icon: "checkmark.circle.fill", color: .green)
-            StatCard(title: "Study Time", value: formatTime(progress.totalStudyTime), icon: "clock.fill", color: .purple)
-            StatCard(title: "Accuracy", value: accuracyText, icon: "target", color: .teal)
+        VStack(spacing: 12) {
+            // Readiness score
+            let readiness = topics.isEmpty ? 0 : topics.map(\.masteryPercentage).reduce(0, +) / Double(topics.count)
+            VStack(spacing: 8) {
+                Text("OA Readiness")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("\(Int(readiness))%")
+                    .font(.system(size: 44, weight: .bold, design: .rounded))
+                    .foregroundStyle(readiness >= 80 ? .green : readiness >= 50 ? .yellow : .red)
+                Text(readiness >= 80 ? "Ready to take the OA!" : readiness >= 50 ? "Getting there, keep studying" : "More study time needed")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(.secondarySystemBackground))
+            )
+
+            LazyVGrid(columns: [.init(.flexible()), .init(.flexible())], spacing: 12) {
+                StatCard(title: "Cards Reviewed", value: "\(progress.totalCardsReviewed)", icon: "rectangle.stack.fill", color: .blue)
+                StatCard(title: "Quizzes Taken", value: "\(progress.totalQuizzesTaken)", icon: "checkmark.circle.fill", color: .green)
+                StatCard(title: "Study Time", value: formatTime(progress.totalStudyTime), icon: "clock.fill", color: .purple)
+                StatCard(title: "Cards Due", value: "\(dueCardCount)", icon: "clock.badge.exclamationmark", color: .orange)
+                StatCard(title: "Cards Mastered", value: "\(masteredCount)", icon: "star.fill", color: .yellow)
+                StatCard(title: "Accuracy", value: accuracyText, icon: "target", color: .teal)
+            }
         }
     }
+
+    private var dueCardCount: Int { SRSEngine.dueCards(from: flashcards).count }
+    private var masteredCount: Int { flashcards.filter { $0.repetitions >= 3 && $0.easeFactor >= 2.5 }.count }
 
     // MARK: - Topic Breakdown
     private var topicBreakdown: some View {

@@ -271,45 +271,112 @@ struct QuizSessionView: View {
     }
 
     // MARK: - Results
-    private var resultsView: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
-            let pct = questions.isEmpty ? 0 : Double(correctCount) / Double(questions.count) * 100
-
-            Image(systemName: pct >= 70 ? "trophy.fill" : "arrow.counterclockwise.circle.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(pct >= 70 ? .yellow : .orange)
-
-            Text(pct >= 70 ? "Great Job!" : "Keep Studying!")
-                .font(.largeTitle.bold())
-
-            Text("\(correctCount) / \(questions.count) correct")
-                .font(.title2)
-
-            Text("\(Int(pct))%")
-                .font(.system(size: 48, weight: .bold, design: .rounded))
-                .foregroundStyle(pct >= 70 ? .green : .orange)
-
-            Text(pct >= 70 ? "You're on track to pass!" : "Review the topics and try again.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            Spacer()
-
-            Button {
-                dismiss()
-            } label: {
-                Text("Done")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(.blue)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+    private var missedQuestions: [(question: QuizQuestion, index: Int)] {
+        correctByQuestion.filter { !$0.value }
+            .compactMap { (index, _) in
+                guard let q = questions[safe: index] else { return nil }
+                return (question: q, index: index)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 32)
+            .sorted { $0.index < $1.index }
+    }
+
+    private var resultsView: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                let pct = questions.isEmpty ? 0 : Double(correctCount) / Double(questions.count) * 100
+
+                // Score header
+                VStack(spacing: 12) {
+                    Image(systemName: pct >= 70 ? "trophy.fill" : "arrow.counterclockwise.circle.fill")
+                        .font(.system(size: 60))
+                        .foregroundStyle(pct >= 70 ? .yellow : .orange)
+
+                    Text(pct >= 70 ? "Great Job!" : "Keep Studying!")
+                        .font(.largeTitle.bold())
+
+                    Text("\(correctCount) / \(questions.count) correct")
+                        .font(.title2)
+
+                    Text("\(Int(pct))%")
+                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .foregroundStyle(pct >= 70 ? .green : .orange)
+
+                    Text(pct >= 70 ? "You're on track to pass!" : "Review the topics and try again.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.top, 32)
+
+                // Missed Questions Review
+                if !missedQuestions.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.red)
+                            Text("Review Missed Questions (\(missedQuestions.count))")
+                                .font(.headline)
+                        }
+
+                        ForEach(missedQuestions, id: \.index) { item in
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Q\(item.index + 1): \(item.question.text)")
+                                    .font(.subheadline.weight(.medium))
+
+                                HStack(alignment: .top, spacing: 6) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.green)
+                                        .font(.caption)
+                                    Text(item.question.correctAnswer)
+                                        .font(.caption)
+                                        .foregroundStyle(.green)
+                                }
+
+                                if !item.question.explanation.isEmpty {
+                                    Text(item.question.explanation)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .italic()
+                                }
+
+                                if let topicName = item.question.topic?.name {
+                                    Text(topicName)
+                                        .font(.caption2)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(.blue.opacity(0.15))
+                                        .clipShape(Capsule())
+                                }
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(.red.opacity(0.05))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(.red.opacity(0.15), lineWidth: 1)
+                                    )
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+
+                // Done button
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Done")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(.blue)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 32)
+            }
         }
         .onAppear {
             if let progress {
@@ -318,8 +385,6 @@ struct QuizSessionView: View {
                 progress.quizzesTakenToday += 1
                 progress.updateStreak()
             }
-
-            // Update topic mastery percentages based on quiz performance
             updateTopicMastery()
         }
     }

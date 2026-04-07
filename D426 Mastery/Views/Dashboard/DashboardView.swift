@@ -8,8 +8,8 @@ struct DashboardView: View {
     @Query private var progressList: [UserProgress]
     @Environment(\.scenePhase) private var scenePhase
 
+    @Binding var selectedTab: Int
     @State private var sessionStart: Date? = nil
-    @State private var selectedTab = 0
 
     private var progress: UserProgress { progressList.first ?? UserProgress() }
     private var dueCards: Int { SRSEngine.dueCards(from: flashcards).count }
@@ -176,9 +176,9 @@ struct DashboardView: View {
             Text("Quick Actions")
                 .font(.headline)
 
-            QuickActionButton(title: "Review Due Cards (\(dueCards))", icon: "rectangle.stack.fill", color: .blue) {}
-            QuickActionButton(title: "Start Mock OA", icon: "doc.questionmark.fill", color: .green) {}
-            QuickActionButton(title: "SQL Playground", icon: "terminal.fill", color: .purple) {}
+            QuickActionButton(title: "Review Due Cards (\(dueCards))", icon: "rectangle.stack.fill", color: .blue) { selectedTab = 1 }
+            QuickActionButton(title: "Start Mock OA", icon: "doc.questionmark.fill", color: .green) { selectedTab = 2 }
+            QuickActionButton(title: "SQL Playground", icon: "terminal.fill", color: .purple) { selectedTab = 3 }
         }
     }
 
