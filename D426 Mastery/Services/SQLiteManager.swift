@@ -1,11 +1,13 @@
 import Foundation
+import SwiftUI
 import SQLite3
 
 /// Lightweight SQLite wrapper for the SQL Playground
-final class SQLiteManager: ObservableObject {
+@Observable
+final class SQLiteManager {
     private var db: OpaquePointer?
-    @Published var lastError: String?
-    @Published var queryHistory: [QueryHistoryEntry] = []
+    var lastError: String?
+    var queryHistory: [QueryHistoryEntry] = []
 
     struct QueryResult {
         var columns: [String]
