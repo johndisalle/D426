@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct SQLPlaygroundView: View {
-    @StateObject private var sqlManager = SQLiteManager()
+    @State private var sqlManager = SQLiteManager()
     @Query private var sampleDatabases: [SampleDatabase]
 
     @State private var queryText = "SELECT * FROM students;"
