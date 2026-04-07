@@ -6,6 +6,10 @@ struct DashboardView: View {
     @Query private var topics: [Topic]
     @Query private var flashcards: [Flashcard]
     @Query private var progressList: [UserProgress]
+    @Environment(\.scenePhase) private var scenePhase
+
+    @State private var sessionStart: Date? = nil
+    @State private var selectedTab = 0
 
     private var progress: UserProgress { progressList.first ?? UserProgress() }
     private var dueCards: Int { SRSEngine.dueCards(from: flashcards).count }
@@ -14,26 +18,82 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Greeting & Streak
                     headerSection
-
-                    // Stats Row
+                    studyTimerSection
                     statsRow
-
-                    // Mastery Radar Chart
                     masterySection
-
-                    // Quick Actions
                     quickActionsSection
-
-                    // Topic Mastery List
                     topicMasterySection
                 }
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
             .navigationTitle("D426 Mastery")
+            .onAppear { startSession() }
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase == .background || newPhase == .inactive {
+                    pauseSession()
+                } else if newPhase == .active {
+                    startSession()
+                }
+            }
         }
+    }
+
+    // MARK: - Study Timer
+    private func startSession() {
+        if sessionStart == nil {
+            sessionStart = .now
+        }
+    }
+
+    private func pauseSession() {
+        guard let start = sessionStart else { return }
+        let elapsed = Date.now.timeIntervalSince(start)
+        if let p = progressList.first {
+            p.totalStudyTime += elapsed
+        }
+        sessionStart = nil
+    }
+
+    private var studyTimerSection: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "clock.fill")
+                .foregroundStyle(.teal)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Total Study Time")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(formattedStudyTime)
+                    .font(.headline)
+            }
+            Spacer()
+            if sessionStart != nil {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(.green)
+                        .frame(width: 8, height: 8)
+                    Text("Active")
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                }
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color(.secondarySystemBackground))
+        )
+    }
+
+    private var formattedStudyTime: String {
+        let total = progress.totalStudyTime
+        let hours = Int(total) / 3600
+        let minutes = Int(total) % 3600 / 60
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        }
+        return "\(minutes)m"
     }
 
     // MARK: - Header
@@ -75,9 +135,10 @@ struct DashboardView: View {
     }
 
     private var accuracy: String {
-        guard progress.totalQuizzesTaken > 0 else { return "—" }
-        let pct = Double(progress.totalCorrectAnswers) / Double(progress.totalQuizzesTaken) * 100
-        return "\(Int(pct))%"
+        guard progress.totalCorrectAnswers > 0, progress.totalQuizzesTaken > 0 else { return "—" }
+        // Use totalCorrectAnswers / (totalQuizzesTaken * average_questions) approximation
+        // More accurate: track total questions answered
+        return "\(min(100, Int(Double(progress.totalCorrectAnswers) / max(1, Double(progress.totalQuizzesTaken * 25)) * 100)))%"
     }
 
     // MARK: - Radar
@@ -86,7 +147,17 @@ struct DashboardView: View {
             Text("Mastery Overview")
                 .font(.headline)
 
-            let chartData = topics.prefix(8).map { ($0.name.components(separatedBy: " ").first ?? $0.name, $0.masteryPercentage) }
+            let chartData = topics.map { topic -> (String, Double) in
+                let shortName: String
+                if topic.name.contains("&") {
+                    shortName = String(topic.name.prefix(while: { $0 != "&" })).trimmingCharacters(in: .whitespaces)
+                } else if topic.name.contains("/") {
+                    shortName = String(topic.name.prefix(while: { $0 != "/" })).trimmingCharacters(in: .whitespaces)
+                } else {
+                    shortName = String(topic.name.split(separator: " ").prefix(2).joined(separator: " "))
+                }
+                return (shortName, topic.masteryPercentage)
+            }
             if !chartData.isEmpty {
                 RadarChartView(data: chartData, color: .teal)
                     .frame(height: 260)
@@ -155,30 +226,5 @@ struct DashboardView: View {
         case 12..<17: return "Good Afternoon"
         default: return "Good Evening"
         }
-    }
-}
-
-// MARK: - Color Extension
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 6:
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8:
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 122, 255)
-        }
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
-        )
     }
 }

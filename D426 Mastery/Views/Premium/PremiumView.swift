@@ -1,10 +1,10 @@
 import SwiftUI
+import StoreKit
 
 struct PremiumView: View {
-    @State private var selectedPlan: PremiumManager.Plan = .lifetime
-    @State private var isLoading = false
-
     private let premium = PremiumManager.shared
+    @State private var selectedProduct: Product?
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
@@ -38,35 +38,44 @@ struct PremiumView: View {
                         .fill(Color(.secondarySystemBackground))
                 )
 
-                // Plans
-                VStack(spacing: 12) {
-                    ForEach(PremiumManager.Plan.allCases, id: \.rawValue) { plan in
-                        Button {
-                            selectedPlan = plan
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(plan.displayName)
-                                        .font(.headline)
-                                    Text(plan.description)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
+                // StoreKit Product Buttons
+                if premium.products.isEmpty {
+                    // Fallback display before products load
+                    VStack(spacing: 12) {
+                        planCard(name: "Monthly", price: "$7.99/mo", desc: "Full access, cancel anytime", highlight: false)
+                        planCard(name: "Lifetime", price: "$24.99", desc: "One-time purchase, forever access", highlight: true)
+                    }
+                } else {
+                    VStack(spacing: 12) {
+                        ForEach(premium.products, id: \.id) { product in
+                            Button {
+                                selectedProduct = product
+                            } label: {
+                                let isSelected = selectedProduct?.id == product.id
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(product.displayName)
+                                            .font(.headline)
+                                        Text(product.description)
+                                            .font(.caption)
+                                            .foregroundStyle(isSelected ? .white.opacity(0.8) : .secondary)
+                                    }
+                                    Spacer()
+                                    Text(product.displayPrice)
+                                        .font(.title3.bold())
+                                        .foregroundStyle(isSelected ? .white : .primary)
                                 }
-                                Spacer()
-                                Text(plan.price)
-                                    .font(.title3.bold())
-                                    .foregroundStyle(selectedPlan == plan ? .white : .primary)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(isSelected ? .blue : Color(.secondarySystemBackground))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(isSelected ? .blue : .gray.opacity(0.3), lineWidth: 2)
+                                        )
+                                )
+                                .foregroundStyle(isSelected ? .white : .primary)
                             }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(selectedPlan == plan ? .blue : Color(.secondarySystemBackground))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(selectedPlan == plan ? .blue : .gray.opacity(0.3), lineWidth: 2)
-                                    )
-                            )
-                            .foregroundStyle(selectedPlan == plan ? .white : .primary)
                         }
                     }
                 }
@@ -74,7 +83,9 @@ struct PremiumView: View {
                 // Purchase button
                 Button {
                     Task {
-                        await premium.purchase(selectedPlan)
+                        if let product = selectedProduct ?? premium.products.last {
+                            _ = await premium.purchase(product)
+                        }
                     }
                 } label: {
                     HStack {
@@ -107,6 +118,12 @@ struct PremiumView: View {
             .padding()
         }
         .background(Color(.systemGroupedBackground))
+        .task {
+            await premium.loadProducts()
+            if selectedProduct == nil {
+                selectedProduct = premium.products.last // default to lifetime
+            }
+        }
     }
 
     private func premiumFeature(icon: String, title: String, subtitle: String) -> some View {
@@ -124,5 +141,26 @@ struct PremiumView: View {
                     .foregroundStyle(.secondary)
             }
         }
+    }
+
+    private func planCard(name: String, price: String, desc: String, highlight: Bool) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name).font(.headline)
+                Text(desc).font(.caption).foregroundStyle(.secondary)
+            }
+            Spacer()
+            Text(price).font(.title3.bold())
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(highlight ? .blue : Color(.secondarySystemBackground))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(highlight ? .blue : .gray.opacity(0.3), lineWidth: 2)
+                )
+        )
+        .foregroundStyle(highlight ? .white : .primary)
     }
 }

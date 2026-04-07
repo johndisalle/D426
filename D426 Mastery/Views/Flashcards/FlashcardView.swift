@@ -252,6 +252,13 @@ struct FlashcardStudyView: View {
         guard let card = dueCards[safe: currentIndex] else { return }
         SRSEngine.processReview(card: card, rating: rating)
 
+        // Haptic feedback
+        switch rating {
+        case .easy, .good: UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        case .hard: UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        case .again: UINotificationFeedbackGenerator().notificationOccurred(.warning)
+        }
+
         // Update progress
         if let progress {
             progress.totalCardsReviewed += 1

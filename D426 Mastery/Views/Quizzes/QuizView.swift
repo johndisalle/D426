@@ -9,6 +9,14 @@ struct QuizView: View {
 
     @State private var quizMode: QuizMode?
     @State private var selectedTopic: Topic?
+    @State private var showPremiumGate = false
+
+    private var isPremium: Bool { PremiumManager.shared.isPremium }
+    private var progress: UserProgress? { progressList.first }
+    private var freeMockOALimitReached: Bool {
+        guard !isPremium else { return false }
+        return (progress?.quizzesTakenToday ?? 0) >= 1
+    }
 
     enum QuizMode: Identifiable {
         case mockOA
@@ -27,7 +35,11 @@ struct QuizView: View {
                 VStack(spacing: 20) {
                     // Mock OA
                     Button {
-                        quizMode = .mockOA
+                        if freeMockOALimitReached {
+                            showPremiumGate = true
+                        } else {
+                            quizMode = .mockOA
+                        }
                     } label: {
                         HStack(spacing: 16) {
                             Image(systemName: "doc.questionmark.fill")
@@ -117,6 +129,9 @@ struct QuizView: View {
                     )
                 }
             }
+            .sheet(isPresented: $showPremiumGate) {
+                PremiumView()
+            }
         }
     }
 }
@@ -135,7 +150,7 @@ struct QuizSessionView: View {
     @State private var showExplanation = false
     @State private var correctCount = 0
     @State private var showResults = false
-    @State private var answers: [String] = []
+    @State private var correctByQuestion: [Int: Bool] = [:]
     @State private var shuffledOptions: [String] = []
 
     private var progress: UserProgress? { progressList.first }
@@ -303,17 +318,46 @@ struct QuizSessionView: View {
                 progress.quizzesTakenToday += 1
                 progress.updateStreak()
             }
+
+            // Update topic mastery percentages based on quiz performance
+            updateTopicMastery()
         }
     }
 
     // MARK: - Helpers
     private func selectAnswer(_ answer: String, for question: QuizQuestion) {
         selectedAnswer = answer
-        if answer == question.correctAnswer {
+        let isCorrect = answer == question.correctAnswer
+        correctByQuestion[currentIndex] = isCorrect
+        if isCorrect {
             correctCount += 1
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        } else {
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
         withAnimation(.spring(duration: 0.3)) {
             showExplanation = true
+        }
+    }
+
+    private func updateTopicMastery() {
+        // Group questions by topic, compute % correct per topic
+        var topicCorrect: [UUID: (correct: Int, total: Int)] = [:]
+        for (index, question) in questions.enumerated() {
+            guard let topicId = question.topic?.id else { continue }
+            let wasCorrect = correctByQuestion[index] ?? false
+            var stats = topicCorrect[topicId] ?? (correct: 0, total: 0)
+            stats.total += 1
+            if wasCorrect { stats.correct += 1 }
+            topicCorrect[topicId] = stats
+        }
+
+        for (topicId, stats) in topicCorrect {
+            guard let topic = questions.first(where: { $0.topic?.id == topicId })?.topic else { continue }
+            let quizScore = Double(stats.correct) / Double(stats.total) * 100
+            // Blend: 70% existing mastery + 30% new quiz score (weighted moving average)
+            let blended = topic.masteryPercentage * 0.7 + quizScore * 0.3
+            topic.masteryPercentage = min(100, max(0, blended))
         }
     }
 
