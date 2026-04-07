@@ -17,32 +17,29 @@ struct SQLSyntaxText: View {
     ])
 
     var body: some View {
-        highlightedText
+        Text(highlightedString)
             .font(.system(.body, design: .monospaced))
     }
 
-    private var highlightedText: Text {
+    private var highlightedString: AttributedString {
         let tokens = tokenize(sql)
-        var result = Text("")
+        var result = AttributedString()
         for token in tokens {
+            var part = AttributedString(token.value)
             switch token.type {
             case .keyword:
-                result = result + Text(token.value)
-                    .foregroundColor(.blue)
-                    .bold()
+                part.foregroundColor = .blue
+                part.font = .system(.body, design: .monospaced).bold()
             case .string:
-                result = result + Text(token.value)
-                    .foregroundColor(.green)
+                part.foregroundColor = .green
             case .number:
-                result = result + Text(token.value)
-                    .foregroundColor(.orange)
+                part.foregroundColor = .orange
             case .comment:
-                result = result + Text(token.value)
-                    .foregroundColor(.gray)
+                part.foregroundColor = .gray
             case .plain:
-                result = result + Text(token.value)
-                    .foregroundColor(.primary)
+                part.foregroundColor = .primary
             }
+            result.append(part)
         }
         return result
     }
