@@ -105,19 +105,19 @@ struct MoreView: View {
                             .foregroundStyle(.primary)
                     }
 
-                    Link(destination: URL(string: "https://johndisalle.github.io/d426/support")!) {
+                    Link(destination: URL(string: "https://johndisalle.github.io/D426/support")!) {
                         Label("Help Center", systemImage: "questionmark.circle.fill")
                             .foregroundStyle(.primary)
                     }
                 }
 
                 Section("Legal") {
-                    Link(destination: URL(string: "https://johndisalle.github.io/d426/terms-of-service")!) {
+                    Link(destination: URL(string: "https://johndisalle.github.io/D426/terms-of-service")!) {
                         Label("Terms of Service", systemImage: "doc.text.fill")
                             .foregroundStyle(.primary)
                     }
 
-                    Link(destination: URL(string: "https://johndisalle.github.io/d426/privacy-policy")!) {
+                    Link(destination: URL(string: "https://johndisalle.github.io/D426/privacy-policy")!) {
                         Label("Privacy Policy", systemImage: "hand.raised.fill")
                             .foregroundStyle(.primary)
                     }

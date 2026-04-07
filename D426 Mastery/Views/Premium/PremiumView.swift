@@ -115,9 +115,9 @@ struct PremiumView: View {
                         .foregroundStyle(.tertiary)
 
                     HStack(spacing: 4) {
-                        Link("Terms of Service", destination: URL(string: "https://johndisalle.github.io/d426/terms-of-service")!)
+                        Link("Terms of Service", destination: URL(string: "https://johndisalle.github.io/D426/terms-of-service")!)
                         Text("&").foregroundStyle(.tertiary)
-                        Link("Privacy Policy", destination: URL(string: "https://johndisalle.github.io/d426/privacy-policy")!)
+                        Link("Privacy Policy", destination: URL(string: "https://johndisalle.github.io/D426/privacy-policy")!)
                     }
                     .font(.caption2)
                 }
