@@ -96,8 +96,8 @@ Please email us at support@ellasid.com with the specific question or card text a
 
 ## Legal
 
-- [Privacy Policy](https://johndisalle.github.io/d426/privacy-policy)
-- [Terms of Service](https://johndisalle.github.io/d426/terms-of-service)
+- [Privacy Policy](https://johndisalle.github.io/D426/privacy-policy)
+- [Terms of Service](https://johndisalle.github.io/D426/terms-of-service)
 
 ---
 *D426 Mastery is not affiliated with or endorsed by Western Governors University (WGU).*
