@@ -109,10 +109,19 @@ struct PremiumView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-                Text("Subscriptions auto-renew unless cancelled. Terms & Privacy apply.")
+                VStack(spacing: 4) {
+                    Text("Subscriptions auto-renew unless cancelled.")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+
+                    HStack(spacing: 4) {
+                        Link("Terms of Service", destination: URL(string: "https://johndisalle.github.io/d426/terms-of-service")!)
+                        Text("&").foregroundStyle(.tertiary)
+                        Link("Privacy Policy", destination: URL(string: "https://johndisalle.github.io/d426/privacy-policy")!)
+                    }
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
-                    .multilineTextAlignment(.center)
+                }
+                .multilineTextAlignment(.center)
                     .padding(.bottom, 32)
             }
             .padding()

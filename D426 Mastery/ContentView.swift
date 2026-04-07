@@ -100,8 +100,25 @@ struct MoreView: View {
                             .foregroundStyle(.primary)
                     }
 
-                    Link(destination: URL(string: "mailto:support@d426mastery.com")!) {
+                    Link(destination: URL(string: "mailto:support@ellasid.com")!) {
                         Label("Contact Support", systemImage: "envelope.fill")
+                            .foregroundStyle(.primary)
+                    }
+
+                    Link(destination: URL(string: "https://johndisalle.github.io/d426/support")!) {
+                        Label("Help Center", systemImage: "questionmark.circle.fill")
+                            .foregroundStyle(.primary)
+                    }
+                }
+
+                Section("Legal") {
+                    Link(destination: URL(string: "https://johndisalle.github.io/d426/terms-of-service")!) {
+                        Label("Terms of Service", systemImage: "doc.text.fill")
+                            .foregroundStyle(.primary)
+                    }
+
+                    Link(destination: URL(string: "https://johndisalle.github.io/d426/privacy-policy")!) {
+                        Label("Privacy Policy", systemImage: "hand.raised.fill")
                             .foregroundStyle(.primary)
                     }
                 }
