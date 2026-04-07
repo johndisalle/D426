@@ -136,6 +136,7 @@ struct QuizSessionView: View {
     @State private var correctCount = 0
     @State private var showResults = false
     @State private var answers: [String] = []
+    @State private var shuffledOptions: [String] = []
 
     private var progress: UserProgress? { progressList.first }
 
@@ -176,9 +177,9 @@ struct QuizSessionView: View {
                             .fill(Color(.secondarySystemBackground))
                     )
 
-                // Options
-                if let options = question.options {
-                    ForEach(options, id: \.self) { option in
+                // Options (shuffled)
+                if !shuffledOptions.isEmpty {
+                    ForEach(shuffledOptions, id: \.self) { option in
                         Button {
                             selectAnswer(option, for: question)
                         } label: {
@@ -244,6 +245,7 @@ struct QuizSessionView: View {
             }
             .padding()
         }
+        .onAppear { shuffleCurrentOptions() }
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -320,8 +322,18 @@ struct QuizSessionView: View {
             currentIndex += 1
             selectedAnswer = nil
             showExplanation = false
+            shuffleCurrentOptions()
         } else {
             showResults = true
+        }
+    }
+
+    private func shuffleCurrentOptions() {
+        if let question = questions[safe: currentIndex],
+           let options = question.options {
+            shuffledOptions = options.shuffled()
+        } else {
+            shuffledOptions = []
         }
     }
 
