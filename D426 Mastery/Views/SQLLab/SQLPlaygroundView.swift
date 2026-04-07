@@ -12,6 +12,9 @@ struct SQLPlaygroundView: View {
     @State private var showHistory = false
     @State private var showSchema = false
     @State private var isLoading = false
+    @State private var showPremiumGate = false
+
+    private var isPremium: Bool { PremiumManager.shared.isPremium }
 
     var body: some View {
         NavigationStack {
@@ -48,6 +51,7 @@ struct SQLPlaygroundView: View {
             .sheet(isPresented: $showDBPicker) { dbPickerSheet }
             .sheet(isPresented: $showHistory) { historySheet }
             .sheet(isPresented: $showSchema) { schemaSheet }
+            .sheet(isPresented: $showPremiumGate) { PremiumView() }
         }
     }
 
@@ -238,15 +242,23 @@ struct SQLPlaygroundView: View {
     // MARK: - Sheets
     private var dbPickerSheet: some View {
         NavigationStack {
-            List(sampleDatabases) { db in
+            List(Array(sampleDatabases.enumerated()), id: \.element.id) { index, db in
+                let isLocked = !isPremium && index > 0
                 Button {
-                    selectedDB = db
-                    _ = sqlManager.loadSampleDatabase(db)
-                    showDBPicker = false
+                    if isLocked {
+                        showDBPicker = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            showPremiumGate = true
+                        }
+                    } else {
+                        selectedDB = db
+                        _ = sqlManager.loadSampleDatabase(db)
+                        showDBPicker = false
+                    }
                 } label: {
                     HStack {
                         Image(systemName: db.iconName)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(isLocked ? .gray : .blue)
                         VStack(alignment: .leading) {
                             Text(db.name)
                                 .font(.subheadline.weight(.medium))
@@ -255,13 +267,17 @@ struct SQLPlaygroundView: View {
                                 .foregroundStyle(.secondary)
                         }
                         Spacer()
-                        if selectedDB?.id == db.id {
+                        if isLocked {
+                            Image(systemName: "lock.fill")
+                                .foregroundStyle(.yellow)
+                                .font(.caption)
+                        } else if selectedDB?.id == db.id {
                             Image(systemName: "checkmark")
                                 .foregroundStyle(.blue)
                         }
                     }
                 }
-                .foregroundStyle(.primary)
+                .foregroundStyle(isLocked ? .secondary : .primary)
             }
             .navigationTitle("Sample Databases")
             .toolbar {

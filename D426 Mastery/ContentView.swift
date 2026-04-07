@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import StoreKit
 
 struct ContentView: View {
     @Query private var progressList: [UserProgress]
@@ -57,6 +58,8 @@ struct ContentView: View {
 }
 
 struct MoreView: View {
+    @Environment(\.requestReview) private var requestReview
+
     var body: some View {
         NavigationStack {
             List {
@@ -86,6 +89,20 @@ struct MoreView: View {
                     } icon: {
                         Image(systemName: "crown.fill")
                             .foregroundStyle(.yellow)
+                    }
+                }
+
+                Section("Support") {
+                    Button {
+                        requestReview()
+                    } label: {
+                        Label("Rate D426 Mastery", systemImage: "star.fill")
+                            .foregroundStyle(.primary)
+                    }
+
+                    Link(destination: URL(string: "mailto:support@d426mastery.com")!) {
+                        Label("Contact Support", systemImage: "envelope.fill")
+                            .foregroundStyle(.primary)
                     }
                 }
 

@@ -14,17 +14,50 @@ struct FlashcardStudyView: View {
     @State private var showTopicPicker = false
     @State private var searchText = ""
     @State private var showBrowser = false
+    @State private var showPremiumGate = false
 
+    private var isPremium: Bool { PremiumManager.shared.isPremium }
     private var progress: UserProgress? { progressList.first }
 
+    private static let freeCardLimit = 50
+
+    private var availableCards: [Flashcard] {
+        if isPremium { return allCards }
+        return Array(allCards.prefix(Self.freeCardLimit))
+    }
+
     private var dueCards: [Flashcard] {
-        let cards = selectedTopic == nil ? allCards : allCards.filter { $0.topic?.id == selectedTopic?.id }
+        let cards = selectedTopic == nil ? availableCards : availableCards.filter { $0.topic?.id == selectedTopic?.id }
         return SRSEngine.dueCards(from: cards)
     }
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
+                // Premium upsell banner
+                if !isPremium {
+                    Button { showPremiumGate = true } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "lock.fill")
+                                .foregroundStyle(.yellow)
+                            Text("\(Self.freeCardLimit) of \(allCards.count) cards free")
+                                .font(.caption.weight(.medium))
+                            Spacer()
+                            Text("Unlock All")
+                                .font(.caption.bold())
+                                .foregroundStyle(.yellow)
+                        }
+                        .padding(10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.yellow.opacity(0.1))
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(.yellow.opacity(0.2), lineWidth: 1))
+                        )
+                    }
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal)
+                }
+
                 // Topic filter
                 topicFilterBar
 
@@ -76,6 +109,9 @@ struct FlashcardStudyView: View {
             }
             .sheet(isPresented: $showBrowser) {
                 flashcardBrowserSheet
+            }
+            .sheet(isPresented: $showPremiumGate) {
+                PremiumView()
             }
         }
     }

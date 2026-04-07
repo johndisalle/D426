@@ -152,6 +152,7 @@ struct QuizSessionView: View {
     @State private var showResults = false
     @State private var correctByQuestion: [Int: Bool] = [:]
     @State private var shuffledOptions: [String] = []
+    @State private var showPremiumForReview = false
 
     private var progress: UserProgress? { progressList.first }
 
@@ -162,6 +163,9 @@ struct QuizSessionView: View {
             } else if let question = questions[safe: currentIndex] {
                 questionView(question)
             }
+        }
+        .sheet(isPresented: $showPremiumForReview) {
+            PremiumView()
         }
     }
 
@@ -309,6 +313,36 @@ struct QuizSessionView: View {
 
                 // Missed Questions Review
                 if !missedQuestions.isEmpty {
+                    if !PremiumManager.shared.isPremium {
+                        // Premium upsell for missed questions
+                        Button {
+                            showPremiumForReview = true
+                        } label: {
+                            VStack(spacing: 12) {
+                                Image(systemName: "lock.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(.yellow)
+                                Text("Review \(missedQuestions.count) Missed Questions")
+                                    .font(.headline)
+                                Text("Upgrade to Premium to see what you got wrong and learn from your mistakes")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                                Text("Unlock Now")
+                                    .font(.subheadline.bold())
+                                    .foregroundStyle(.yellow)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(.yellow.opacity(0.08))
+                                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(.yellow.opacity(0.2), lineWidth: 1))
+                            )
+                        }
+                        .foregroundStyle(.primary)
+                        .padding(.horizontal)
+                    } else {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             Image(systemName: "xmark.circle.fill")
@@ -360,6 +394,7 @@ struct QuizSessionView: View {
                         }
                     }
                     .padding(.horizontal)
+                    } // end else (premium)
                 }
 
                 // Done button

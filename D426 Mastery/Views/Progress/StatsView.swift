@@ -5,7 +5,9 @@ struct StatsView: View {
     @Query private var progressList: [UserProgress]
     @Query private var flashcards: [Flashcard]
     @Query private var topics: [Topic]
+    @State private var showPremiumGate = false
 
+    private var isPremium: Bool { PremiumManager.shared.isPremium }
     private var progress: UserProgress { progressList.first ?? UserProgress() }
 
     var body: some View {
@@ -28,6 +30,7 @@ struct StatsView: View {
             }
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Statistics")
+            .sheet(isPresented: $showPremiumGate) { PremiumView() }
         }
     }
 
@@ -79,24 +82,47 @@ struct StatsView: View {
     private var statsGrid: some View {
         VStack(spacing: 12) {
             // Readiness score
-            let readiness = topics.isEmpty ? 0 : topics.map(\.masteryPercentage).reduce(0, +) / Double(topics.count)
-            VStack(spacing: 8) {
-                Text("OA Readiness")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("\(Int(readiness))%")
-                    .font(.system(size: 44, weight: .bold, design: .rounded))
-                    .foregroundStyle(readiness >= 80 ? .green : readiness >= 50 ? .yellow : .red)
-                Text(readiness >= 80 ? "Ready to take the OA!" : readiness >= 50 ? "Getting there, keep studying" : "More study time needed")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            if isPremium {
+                let readiness = topics.isEmpty ? 0 : topics.map(\.masteryPercentage).reduce(0, +) / Double(topics.count)
+                VStack(spacing: 8) {
+                    Text("OA Readiness")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text("\(Int(readiness))%")
+                        .font(.system(size: 44, weight: .bold, design: .rounded))
+                        .foregroundStyle(readiness >= 80 ? .green : readiness >= 50 ? .yellow : .red)
+                    Text(readiness >= 80 ? "Ready to take the OA!" : readiness >= 50 ? "Getting there, keep studying" : "More study time needed")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(.secondarySystemBackground))
+                )
+            } else {
+                Button { showPremiumGate = true } label: {
+                    VStack(spacing: 8) {
+                        Image(systemName: "lock.fill")
+                            .font(.title2)
+                            .foregroundStyle(.yellow)
+                        Text("OA Readiness Score")
+                            .font(.headline)
+                        Text("Upgrade to see if you're ready to pass")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.yellow.opacity(0.08))
+                            .overlay(RoundedRectangle(cornerRadius: 16).stroke(.yellow.opacity(0.2), lineWidth: 1))
+                    )
+                }
+                .foregroundStyle(.primary)
             }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.secondarySystemBackground))
-            )
 
             LazyVGrid(columns: [.init(.flexible()), .init(.flexible())], spacing: 12) {
                 StatCard(title: "Cards Reviewed", value: "\(progress.totalCardsReviewed)", icon: "rectangle.stack.fill", color: .blue)
