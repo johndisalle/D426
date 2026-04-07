@@ -65,7 +65,7 @@ The App is intended to supplement, not replace, official course materials, textb
 
 ## 7. Data and Privacy
 
-Your use of the App is also governed by our [Privacy Policy](https://johndisalle.github.io/d426/privacy-policy). All study data is stored locally on your device and is not transmitted to our servers.
+Your use of the App is also governed by our [Privacy Policy](https://johndisalle.github.io/D426/privacy-policy). All study data is stored locally on your device and is not transmitted to our servers.
 
 ## 8. Limitation of Liability
 
