@@ -1391,3 +1391,486 @@ struct DataSeeder {
         ))
     }
 }
+
+    // MARK: - Quiz Questions
+    private static func seedQuizQuestions(context: ModelContext, relationalModel: Topic, erDiagrams: Topic, keys: Topic, normalization: Topic, ddl: Topic, dml: Topic, models: Topic, dbms: Topic) {
+
+        // --- Relational Model Quizzes (25+) ---
+        let rmQ: [(String, [String], String, String)] = [
+            ("What is a tuple in the relational model?", ["A column in a table", "A row in a table", "A table itself", "A database"], "A row in a table", "A tuple represents a single row/record in a relation."),
+            ("What is the degree of a relation?", ["Number of rows", "Number of columns", "Number of tables", "Number of keys"], "Number of columns", "Degree refers to the number of attributes (columns) in a relation."),
+            ("What is the cardinality of a relation?", ["Number of columns", "Number of rows", "Number of keys", "Number of constraints"], "Number of rows", "Cardinality is the number of tuples (rows) in a relation."),
+            ("Who proposed the relational model?", ["Peter Chen", "Edgar F. Codd", "Michael Stonebraker", "Larry Ellison"], "Edgar F. Codd", "Edgar F. Codd published the relational model in 1970."),
+            ("Which operation filters rows based on a condition?", ["PROJECT", "SELECT", "JOIN", "UNION"], "SELECT", "The SELECT (σ) operation filters tuples based on a predicate."),
+            ("Which operation selects specific columns?", ["SELECT", "PROJECT", "RESTRICT", "DIVIDE"], "PROJECT", "PROJECT (π) selects specific attributes, removing duplicates."),
+            ("What does the UNION operation require?", ["Same primary keys", "Same number of rows", "Union-compatible relations", "Foreign key relationships"], "Union-compatible relations", "UNION requires both relations to have the same number of attributes with compatible domains."),
+            ("A NULL value represents:", ["Zero", "An empty string", "A missing or unknown value", "A false boolean"], "A missing or unknown value", "NULL represents missing, unknown, or inapplicable data — not zero or empty string."),
+            ("What is a base relation?", ["A view", "A physically stored table", "A temporary table", "An index"], "A physically stored table", "A base relation is a named relation that physically stores data."),
+            ("The closed world assumption states:", ["All data is encrypted", "Unstored facts are false", "All tables must have keys", "NULLs are not allowed"], "Unstored facts are false", "Under the closed world assumption, if a fact is not in the database, it is considered false."),
+            ("What is a derived relation?", ["A base table", "A view defined by a query", "A foreign key", "An index"], "A view defined by a query", "A derived relation (view) is a virtual table defined by a query."),
+            ("Which is NOT a relational algebra operation?", ["SELECT", "PROJECT", "COMMIT", "JOIN"], "COMMIT", "COMMIT is a transaction control command, not a relational algebra operation."),
+            ("What does the Cartesian Product produce?", ["Matching rows only", "All possible row combinations", "Unique rows only", "Sorted rows"], "All possible row combinations", "Cartesian Product combines every tuple from one relation with every tuple from another."),
+            ("A relation schema defines:", ["Actual data values", "Structure of a relation", "Query results", "Index structures"], "Structure of a relation", "A relation schema defines the name, attributes, and domains of a relation."),
+            ("An equijoin uses which comparison?", ["Less than", "Greater than", "Equality only", "Any comparison"], "Equality only", "An equijoin is a theta join where the condition uses only equality (=)."),
+            ("What does a LEFT OUTER JOIN preserve?", ["Only matched rows", "All rows from the left relation", "All rows from the right relation", "All rows from both"], "All rows from the left relation", "LEFT OUTER JOIN keeps all tuples from the left relation, with NULLs for unmatched right rows."),
+            ("Which is a property of relations?", ["Duplicate rows allowed", "Column order matters", "Each cell contains an atomic value", "Row order matters"], "Each cell contains an atomic value", "In the relational model, all attribute values must be atomic (indivisible)."),
+            ("What is relational calculus?", ["A procedural query language", "A non-procedural query language", "A physical storage model", "A normalization technique"], "A non-procedural query language", "Relational calculus is declarative — it specifies what to retrieve, not how."),
+            ("Relational algebra is considered:", ["Declarative", "Procedural", "Object-oriented", "Hierarchical"], "Procedural", "Relational algebra specifies the sequence of operations (how) to retrieve data."),
+            ("A self-join is:", ["A join between different databases", "A table joined with itself", "A join without conditions", "A cross-database join"], "A table joined with itself", "A self-join joins a table to itself using aliases."),
+            ("What is a natural join?", ["Joins on all common attributes automatically", "Joins on primary keys only", "A cross join", "A join with no conditions"], "Joins on all common attributes automatically", "Natural join matches on all attributes with the same name in both relations."),
+            ("The DIVISION operation answers which type of query?", ["Find any match", "Find all matches (for all)", "Find the first match", "Count matches"], "Find all matches (for all)", "Division finds tuples associated with ALL tuples in another relation."),
+            ("What is a semijoin?", ["Returns columns from both tables", "Returns only matching rows from the first table", "Returns all rows", "A self-join"], "Returns only matching rows from the first table", "A semijoin returns tuples from the first relation that have matches in the second."),
+            ("Codd's Information Rule states:", ["Data must be encrypted", "All info is represented in tables", "All tables need indexes", "Foreign keys are required"], "All info is represented in tables", "Rule 1: All information is represented at the logical level by values in tables."),
+            ("The entity integrity rule requires:", ["Foreign keys match primary keys", "No primary key attribute is NULL", "All attributes are unique", "Tables have at most 10 columns"], "No primary key attribute is NULL", "Entity integrity ensures every tuple is uniquely identifiable via a non-null primary key."),
+        ]
+        for q in rmQ {
+            context.insert(QuizQuestion(type: .multipleChoice, text: q.0, options: q.1, correctAnswer: q.2, explanation: q.3, topic: relationalModel))
+        }
+
+        // --- ER Diagrams Quizzes (25+) ---
+        let erQ: [(String, [String], String, String)] = [
+            ("In Crow's Foot notation, a fork symbol represents:", ["One", "Zero", "Many", "Optional"], "Many", "The crow's foot (fork) indicates a maximum cardinality of 'many'."),
+            ("A weak entity is represented by:", ["A single-border rectangle", "A double-border rectangle", "A diamond", "An oval"], "A double-border rectangle", "Weak entities use double-border rectangles to distinguish them from strong entities."),
+            ("What symbol represents a derived attribute?", ["Solid oval", "Double oval", "Dashed oval", "Underlined oval"], "Dashed oval", "Derived attributes are shown with dashed ovals."),
+            ("A multivalued attribute is shown as:", ["Single oval", "Double oval", "Dashed oval", "Rectangle"], "Double oval", "Multivalued attributes use double-bordered ovals."),
+            ("Total participation is shown as:", ["Single line", "Double line", "Dashed line", "Dotted line"], "Double line", "Total (mandatory) participation uses a double line in Chen notation."),
+            ("In a 1:M relationship, the FK goes on which side?", ["The 'one' side", "The 'many' side", "Both sides", "Neither side"], "The 'many' side", "The PK of the 'one' side is placed as a FK in the 'many' side table."),
+            ("An M:N relationship requires:", ["A foreign key", "A junction/bridge table", "A weak entity", "A derived attribute"], "A junction/bridge table", "M:N relationships need an associative/junction table to resolve into two 1:M relationships."),
+            ("In Crow's Foot, O| means:", ["Exactly one", "One or many", "Zero or one", "Zero or many"], "Zero or one", "O (optional/zero) + | (one) = zero or one."),
+            ("In Crow's Foot, || means:", ["Zero or one", "Exactly one (mandatory)", "Zero or many", "One or many"], "Exactly one (mandatory)", "Two dashes (||) = mandatory one, meaning exactly one."),
+            ("A recursive relationship involves:", ["Two different entities", "An entity related to itself", "Three entities", "A weak entity"], "An entity related to itself", "A recursive/unary relationship is an entity associated with itself."),
+            ("The degree of a binary relationship is:", ["1", "2", "3", "4"], "2", "A binary relationship involves exactly two entity types."),
+            ("Which notation is most common in industry?", ["Chen", "Crow's Foot", "Bachman", "UML only"], "Crow's Foot", "Crow's Foot is the most widely used notation in industry tools."),
+            ("An identifying relationship connects:", ["Two strong entities", "A weak entity to its owner", "Two weak entities", "An entity to an attribute"], "A weak entity to its owner", "An identifying relationship links a weak entity to the strong entity it depends on."),
+            ("A partial key (discriminator) belongs to:", ["A strong entity", "A weak entity", "A relationship", "A view"], "A weak entity", "A partial key partially identifies instances of a weak entity."),
+            ("What is specialization?", ["Combining entities into one", "Dividing an entity into subtypes", "Creating a new relationship", "Removing attributes"], "Dividing an entity into subtypes", "Specialization decomposes a supertype into subtypes based on distinguishing characteristics."),
+            ("What is generalization?", ["Dividing entities", "Combining entities into a supertype", "Creating indexes", "Normalizing tables"], "Combining entities into a supertype", "Generalization combines entity types with common attributes into a higher-level supertype."),
+            ("Disjoint specialization means:", ["Entity belongs to multiple subtypes", "Entity belongs to only one subtype", "All entities must specialize", "No specialization allowed"], "Entity belongs to only one subtype", "Disjoint (d) means each supertype instance can be in at most one subtype."),
+            ("An attribute of a relationship is common in:", ["1:1 relationships", "1:M relationships", "M:N relationships", "Recursive relationships"], "M:N relationships", "M:N relationships often have attributes (e.g., grade on enrollment)."),
+            ("How is a key attribute shown in Chen notation?", ["Bold text", "Underlined name", "Dashed oval", "Double rectangle"], "Underlined name", "Key attributes are shown in ovals with the attribute name underlined."),
+            ("A ternary relationship involves how many entities?", ["1", "2", "3", "4"], "3", "A ternary relationship involves three entity types."),
+            ("Min-max notation (1,N) means:", ["Optional, one only", "Mandatory, many possible", "Optional, many possible", "Mandatory, one only"], "Mandatory, many possible", "(1,N) means minimum 1 (mandatory) and maximum N (many)."),
+            ("Overlapping specialization means:", ["An entity can belong to multiple subtypes", "An entity belongs to one subtype only", "Subtypes cannot exist", "All must specialize"], "An entity can belong to multiple subtypes", "Overlapping (o) allows a supertype instance to belong to multiple subtypes."),
+            ("A relationship in Chen notation is drawn as:", ["Rectangle", "Oval", "Diamond", "Triangle"], "Diamond", "Relationships are represented by diamond shapes in Chen notation."),
+            ("What is modality?", ["Maximum participation", "Minimum participation (0 or 1)", "Number of entities", "Number of attributes"], "Minimum participation (0 or 1)", "Modality indicates whether participation is optional (0) or mandatory (1)."),
+            ("How do you convert a 1:1 relationship to tables?", ["Create a junction table", "Put FK on either side (prefer total participation side)", "Merge into one table always", "Create three tables"], "Put FK on either side (prefer total participation side)", "For 1:1, place the FK on the side with total participation if possible."),
+        ]
+        for q in erQ {
+            context.insert(QuizQuestion(type: .multipleChoice, text: q.0, options: q.1, correctAnswer: q.2, explanation: q.3, topic: erDiagrams))
+        }
+
+        // --- Keys Quizzes (25+) ---
+        let keyQ: [(String, [String], String, String)] = [
+            ("A candidate key is:", ["Any set of unique attributes", "A minimal superkey", "Always a single column", "The same as a foreign key"], "A minimal superkey", "A candidate key is a minimal superkey — removing any attribute would lose uniqueness."),
+            ("How many primary keys can a table have?", ["Zero", "Exactly one", "Two", "Unlimited"], "Exactly one", "A table has exactly one primary key, though it may be composite (multiple columns)."),
+            ("A surrogate key is:", ["A natural business attribute", "A system-generated artificial key", "A foreign key", "A composite key"], "A system-generated artificial key", "Surrogate keys are auto-generated (e.g., auto-increment) with no business meaning."),
+            ("Referential integrity ensures:", ["Primary keys are unique", "Foreign keys match existing primary keys or are NULL", "All columns have values", "Tables are normalized"], "Foreign keys match existing primary keys or are NULL", "Referential integrity requires FK values to match an existing PK or be NULL."),
+            ("CASCADE on DELETE means:", ["Prevent deletion", "Set FK to NULL", "Delete referencing rows too", "Set FK to default"], "Delete referencing rows too", "CASCADE automatically deletes all rows that reference the deleted row."),
+            ("SET NULL on DELETE means:", ["Prevent deletion", "Set FK values to NULL", "Delete referencing rows", "Ignore the constraint"], "Set FK values to NULL", "SET NULL sets the foreign key column to NULL when the referenced row is deleted."),
+            ("RESTRICT on DELETE means:", ["Allow deletion always", "Prevent deletion if references exist", "Delete referencing rows", "Set FK to default"], "Prevent deletion if references exist", "RESTRICT prevents deletion of a row that is still referenced by foreign keys."),
+            ("A composite primary key consists of:", ["One column", "Two or more columns", "No columns", "All columns"], "Two or more columns", "A composite key uses multiple attributes together to uniquely identify rows."),
+            ("Entity integrity requires:", ["Foreign keys are not NULL", "Primary keys are not NULL", "All attributes are not NULL", "Indexes exist"], "Primary keys are not NULL", "Entity integrity: no component of a primary key may be NULL."),
+            ("An alternate key is:", ["The chosen primary key", "A candidate key not chosen as PK", "A foreign key", "A superkey that's not minimal"], "A candidate key not chosen as PK", "Alternate keys are candidate keys that were not selected as the primary key."),
+            ("A natural key example is:", ["Auto-increment ID", "GUID", "Social Security Number", "Row number"], "Social Security Number", "Natural keys have real-world meaning, like SSN, ISBN, or email."),
+            ("Can a foreign key be NULL?", ["Never", "Yes, if no NOT NULL constraint", "Only in junction tables", "Only with CASCADE"], "Yes, if no NOT NULL constraint", "FK can be NULL unless explicitly constrained with NOT NULL, indicating optional relationship."),
+            ("A junction table resolves which relationship?", ["1:1", "1:M", "M:N", "Recursive"], "M:N", "Junction/bridge tables resolve many-to-many relationships using two foreign keys."),
+            ("The primary key of a junction table is typically:", ["A surrogate key", "A composite of both foreign keys", "One foreign key", "No primary key"], "A composite of both foreign keys", "The composite of both FKs typically forms the PK of a junction table."),
+            ("What is key migration?", ["Deleting a key", "Copying a PK as FK to another table", "Changing key data type", "Adding an index"], "Copying a PK as FK to another table", "Key migration is the process of placing a PK from one table as a FK in another."),
+            ("A self-referencing FK references:", ["Another table's PK", "Its own table's PK", "A view", "An index"], "Its own table's PK", "A self-referencing FK points to the PK of the same table (e.g., manager_id → employee_id)."),
+            ("UNIQUE constraint differs from PRIMARY KEY because:", ["UNIQUE allows NULL values", "UNIQUE doesn't enforce uniqueness", "PRIMARY KEY allows duplicates", "They are identical"], "UNIQUE allows NULL values", "UNIQUE allows NULL (typically one) and multiple UNIQUE constraints per table. PK allows neither."),
+            ("A dangling reference is:", ["A valid FK value", "An FK value with no matching PK", "A NULL primary key", "An unused index"], "An FK value with no matching PK", "A dangling reference violates referential integrity — the FK points to a non-existent PK."),
+            ("ON UPDATE CASCADE means:", ["Prevent updates to PK", "Auto-update matching FKs", "Delete matching rows", "Set FKs to NULL"], "Auto-update matching FKs", "When a PK value changes, all matching FK values are automatically updated."),
+            ("Which is NOT a good primary key practice?", ["Use stable values", "Use minimal columns", "Use frequently changing values", "Ensure NOT NULL"], "Use frequently changing values", "Good PKs should be stable/immutable. Changing PKs requires cascading updates."),
+            ("A superkey is:", ["Always minimal", "Any set that uniquely identifies rows", "Always a single column", "The same as a foreign key"], "Any set that uniquely identifies rows", "A superkey is any combination of attributes that uniquely identifies tuples."),
+            ("Can a table have multiple UNIQUE constraints?", ["No", "Yes", "Only with a surrogate key", "Only on numeric columns"], "Yes", "A table can have multiple UNIQUE constraints but only one PRIMARY KEY."),
+            ("A lookup/reference table is used to:", ["Store transaction data", "Store valid values for coded fields", "Replace indexes", "Backup data"], "Store valid values for coded fields", "Lookup tables store valid values (e.g., state codes, status types) referenced by FKs."),
+            ("What does a FK with ON DELETE SET DEFAULT do?", ["Deletes the FK row", "Sets FK to its default value", "Prevents deletion", "Sets FK to NULL"], "Sets FK to its default value", "SET DEFAULT sets the FK column to its defined default value when the referenced row is deleted."),
+            ("In weak entity key inheritance, the full PK is:", ["Only the partial key", "Owner's PK + partial key", "Only the owner's PK", "A surrogate key"], "Owner's PK + partial key", "A weak entity's PK = owner entity's PK + its own discriminator/partial key."),
+        ]
+        for q in keyQ {
+            context.insert(QuizQuestion(type: .multipleChoice, text: q.0, options: q.1, correctAnswer: q.2, explanation: q.3, topic: keys))
+        }
+
+        // --- Normalization Quizzes (25+) ---
+        let normQ: [(String, [String], String, String)] = [
+            ("1NF requires:", ["No partial dependencies", "All values are atomic", "No transitive dependencies", "Every determinant is a superkey"], "All values are atomic", "First Normal Form requires all attribute values to be atomic (indivisible)."),
+            ("2NF eliminates:", ["Multivalued attributes", "Partial dependencies", "Transitive dependencies", "All redundancy"], "Partial dependencies", "2NF removes partial dependencies — non-key attributes depending on part of a composite key."),
+            ("3NF eliminates:", ["Repeating groups", "Partial dependencies", "Transitive dependencies", "Multivalued dependencies"], "Transitive dependencies", "3NF removes transitive dependencies — non-key attributes depending on other non-key attributes."),
+            ("BCNF requires that every determinant is:", ["A foreign key", "A superkey", "A candidate key", "A non-key attribute"], "A superkey", "In BCNF, for every functional dependency X → Y, X must be a superkey."),
+            ("A partial dependency can only occur when:", ["The PK is a single column", "The PK is composite", "There are no foreign keys", "The table has no indexes"], "The PK is composite", "Partial dependencies require a composite PK — depending on part of the key."),
+            ("An insertion anomaly is:", ["Deleting too much data", "Unable to insert data without other data", "Inconsistent updates", "Slow insert performance"], "Unable to insert data without other data", "Insertion anomaly: can't add data because other required (unrelated) data is missing."),
+            ("An update anomaly is:", ["Slow updates", "Inconsistency from redundant data updates", "Unable to update", "Automatic updates"], "Inconsistency from redundant data updates", "Update anomaly: changing data in one place but not all copies, causing inconsistency."),
+            ("A deletion anomaly is:", ["Slow deletion", "Unintended data loss when deleting a row", "Unable to delete", "Cascading deletes"], "Unintended data loss when deleting a row", "Deletion anomaly: losing unrelated data because it's stored only in the deleted row."),
+            ("In X → Y, X is called the:", ["Dependent", "Determinant", "Foreign key", "Candidate key"], "Determinant", "The left side of a functional dependency is the determinant."),
+            ("Denormalization is:", ["Removing all redundancy", "Intentionally adding redundancy for performance", "Converting to 1NF", "Dropping tables"], "Intentionally adding redundancy for performance", "Denormalization adds controlled redundancy to improve read/query performance."),
+            ("Which normal form is the strictest?", ["1NF", "2NF", "3NF", "BCNF"], "BCNF", "BCNF is stricter than 3NF — every determinant must be a superkey."),
+            ("A trivial functional dependency is:", ["A → B where B is a subset of A", "A → B where A is a key", "A → B where B is a key", "Any dependency"], "A → B where B is a subset of A", "A trivial FD has the dependent as a subset of the determinant (always true)."),
+            ("Lossless decomposition means:", ["Data is compressed", "Original relation can be reconstructed by joining", "Some data may be lost", "Tables are encrypted"], "Original relation can be reconstructed by joining", "Lossless decomposition guarantees no data is lost when tables are rejoined."),
+            ("Armstrong's axiom of transitivity states:", ["If X→Y then Y→X", "If X→Y and Y→Z then X→Z", "If X→Y then XZ→YZ", "If Y⊆X then X→Y"], "If X→Y and Y→Z then X→Z", "Transitivity: if X determines Y, and Y determines Z, then X determines Z."),
+            ("A repeating group violates:", ["2NF", "3NF", "1NF", "BCNF"], "1NF", "Repeating groups (non-atomic values) violate First Normal Form."),
+            ("Which is true about a table in 3NF?", ["It's always in BCNF", "It's always in 2NF", "It may have partial dependencies", "It has no primary key"], "It's always in 2NF", "3NF implies 2NF which implies 1NF. But 3NF doesn't guarantee BCNF."),
+            ("A prime attribute is:", ["Any attribute", "Part of a candidate key", "A foreign key", "A non-key attribute"], "Part of a candidate key", "A prime attribute participates in at least one candidate key."),
+            ("4NF addresses:", ["Partial dependencies", "Transitive dependencies", "Multivalued dependencies", "Join dependencies"], "Multivalued dependencies", "4NF eliminates non-trivial multivalued dependencies."),
+            ("Student(ID, Name, Major, AdvisorName, AdvisorOffice) — AdvisorOffice depends on AdvisorName. This violates:", ["1NF", "2NF", "3NF", "No violation"], "3NF", "AdvisorOffice transitively depends on ID through AdvisorName — a 3NF violation."),
+            ("Normalization primarily reduces:", ["Query complexity", "Data redundancy", "Number of tables", "Storage space"], "Data redundancy", "The main goal of normalization is to eliminate data redundancy and anomalies."),
+            ("A canonical cover is:", ["The largest set of FDs", "A minimal equivalent set of FDs", "All possible FDs", "Only trivial FDs"], "A minimal equivalent set of FDs", "A canonical cover is a minimal set of FDs equivalent to the original, with no redundancy."),
+            ("Dependency preservation means:", ["All data is preserved", "All FDs can be checked without joining", "Keys are preserved", "Indexes are preserved"], "All FDs can be checked without joining", "Dependency preservation ensures all original FDs can be enforced on individual decomposed tables."),
+            ("The closure X⁺ of attributes X is:", ["All attributes determined by X", "All superkeys", "All candidate keys", "All FDs"], "All attributes determined by X", "X⁺ is the set of all attributes functionally determined by X using the given FDs."),
+            ("Which normal form addresses join dependencies?", ["3NF", "BCNF", "4NF", "5NF"], "5NF", "5NF (Project-Join Normal Form) addresses join dependencies."),
+            ("Over-normalization can cause:", ["Data redundancy", "Too many joins hurting performance", "Anomalies", "NULL values"], "Too many joins hurting performance", "Excessive normalization creates many small tables requiring complex joins."),
+        ]
+        for q in normQ {
+            context.insert(QuizQuestion(type: .multipleChoice, text: q.0, options: q.1, correctAnswer: q.2, explanation: q.3, topic: normalization))
+        }
+
+        // --- DDL Quizzes (25+) ---
+        let ddlQ: [(String, [String], String, String)] = [
+            ("Which is a DDL command?", ["SELECT", "INSERT", "CREATE TABLE", "UPDATE"], "CREATE TABLE", "CREATE TABLE defines database structure — a Data Definition Language command."),
+            ("DROP TABLE does what?", ["Removes all rows", "Removes the table and all data", "Removes indexes only", "Renames the table"], "Removes the table and all data", "DROP TABLE permanently deletes the table structure and all its data."),
+            ("ALTER TABLE is used to:", ["Query data", "Modify table structure", "Insert data", "Delete rows"], "Modify table structure", "ALTER TABLE adds/drops/modifies columns and constraints on existing tables."),
+            ("NOT NULL constraint ensures:", ["Unique values", "No NULL values in the column", "Values match a pattern", "Values are positive"], "No NULL values in the column", "NOT NULL prevents the column from containing NULL values."),
+            ("How many PRIMARY KEY constraints per table?", ["Zero", "One", "Two", "Unlimited"], "One", "Each table can have exactly one PRIMARY KEY constraint (which may be composite)."),
+            ("CHECK constraint does what?", ["Ensures uniqueness", "Validates values against a condition", "Creates an index", "Links tables"], "Validates values against a condition", "CHECK limits allowed values based on a Boolean expression."),
+            ("DEFAULT constraint provides:", ["A unique value", "A value when none is specified", "An index", "A foreign key"], "A value when none is specified", "DEFAULT supplies a value when INSERT doesn't specify one for that column."),
+            ("TRUNCATE TABLE vs DELETE:", ["TRUNCATE is DML", "TRUNCATE keeps table structure, removes all rows", "TRUNCATE uses WHERE", "TRUNCATE is slower"], "TRUNCATE keeps table structure, removes all rows", "TRUNCATE removes all data but preserves the table definition. Faster than DELETE."),
+            ("VARCHAR(50) stores:", ["Exactly 50 characters", "Up to 50 variable-length characters", "50 integers", "50 bytes of binary data"], "Up to 50 variable-length characters", "VARCHAR stores variable-length strings up to the specified maximum."),
+            ("DECIMAL(8,2) can store:", ["8 decimal places", "Up to 999999.99", "8 digits total, all decimals", "Only integers"], "Up to 999999.99", "DECIMAL(8,2) = 8 total digits, 2 after decimal point."),
+            ("CREATE INDEX is used to:", ["Create a table", "Speed up data retrieval", "Add a constraint", "Create a view"], "Speed up data retrieval", "Indexes improve query performance by creating efficient access paths."),
+            ("IF NOT EXISTS in CREATE TABLE:", ["Drops existing table first", "Prevents error if table exists", "Creates table only if data exists", "Forces table creation"], "Prevents error if table exists", "IF NOT EXISTS skips creation without error when the table already exists."),
+            ("AUTO_INCREMENT/IDENTITY is used for:", ["Date columns", "Generating unique sequential IDs", "Encrypting data", "Creating indexes"], "Generating unique sequential IDs", "AUTO_INCREMENT automatically generates unique sequential numbers for new rows."),
+            ("A table constraint is defined:", ["Inline with a column", "After all column definitions", "In a separate file", "In the WHERE clause"], "After all column definitions", "Table constraints are defined after all columns — required for composite keys."),
+            ("CREATE VIEW creates:", ["A physical table", "A virtual table from a query", "An index", "A stored procedure"], "A virtual table from a query", "Views are virtual tables defined by SELECT queries."),
+            ("Which data type is best for currency?", ["FLOAT", "DECIMAL", "VARCHAR", "INT"], "DECIMAL", "DECIMAL/NUMERIC avoids floating-point precision errors with monetary values."),
+            ("FOREIGN KEY with REFERENCES:", ["Creates an index", "Links to another table's key", "Makes column unique", "Sets a default value"], "Links to another table's key", "REFERENCES specifies which table/column the foreign key points to."),
+            ("A temporary table:", ["Persists forever", "Exists only for the session", "Cannot hold data", "Is always empty"], "Exists only for the session", "Temporary tables exist only for the duration of a session or transaction."),
+            ("DROP vs TRUNCATE:", ["Both remove structure", "DROP removes structure, TRUNCATE keeps it", "TRUNCATE removes structure", "Both keep structure"], "DROP removes structure, TRUNCATE keeps it", "DROP deletes table + data. TRUNCATE deletes data only, keeping the table structure."),
+            ("How to add a column to an existing table?", ["CREATE COLUMN", "ALTER TABLE ADD column", "INSERT COLUMN", "UPDATE TABLE ADD column"], "ALTER TABLE ADD column", "ALTER TABLE table_name ADD column_name datatype;"),
+            ("How to remove a constraint?", ["DELETE CONSTRAINT", "ALTER TABLE DROP CONSTRAINT", "REMOVE CONSTRAINT", "TRUNCATE CONSTRAINT"], "ALTER TABLE DROP CONSTRAINT", "ALTER TABLE table_name DROP CONSTRAINT constraint_name;"),
+            ("CHAR(10) vs VARCHAR(10):", ["CHAR is variable, VARCHAR is fixed", "CHAR is fixed-length, VARCHAR is variable", "Both are identical", "CHAR stores numbers only"], "CHAR is fixed-length, VARCHAR is variable", "CHAR always uses 10 characters (padded). VARCHAR uses only what's needed up to 10."),
+            ("CREATE DATABASE:", ["Creates a table", "Creates a new database", "Creates a schema", "Creates an index"], "Creates a new database", "CREATE DATABASE creates a new database container."),
+            ("A computed/generated column:", ["Must be manually updated", "Auto-calculates from other columns", "Cannot be queried", "Requires an index"], "Auto-calculates from other columns", "Generated columns derive their values automatically from expressions on other columns."),
+            ("Which is valid for composite PK?", ["PRIMARY KEY (col1)", "PRIMARY KEY (col1, col2)", "PRIMARY KEY col1 col2", "KEY (col1, col2)"], "PRIMARY KEY (col1, col2)", "Composite PKs are defined as table constraints: PRIMARY KEY (col1, col2)."),
+        ]
+        for q in ddlQ {
+            context.insert(QuizQuestion(type: .multipleChoice, text: q.0, options: q.1, correctAnswer: q.2, explanation: q.3, topic: ddl))
+        }
+
+        // --- DML Quizzes (25+) ---
+        let dmlQ: [(String, [String], String, String)] = [
+            ("Which is a DML command?", ["CREATE", "ALTER", "SELECT", "DROP"], "SELECT", "SELECT retrieves data — a Data Manipulation Language command."),
+            ("DELETE without WHERE:", ["Deletes one row", "Deletes all rows", "Causes an error", "Does nothing"], "Deletes all rows", "DELETE without WHERE removes every row from the table."),
+            ("ORDER BY default sort order:", ["Descending", "Random", "Ascending", "By primary key"], "Ascending", "ORDER BY defaults to ASC (ascending) unless DESC is specified."),
+            ("GROUP BY is used with:", ["DDL commands", "Aggregate functions", "ALTER TABLE", "CREATE INDEX"], "Aggregate functions", "GROUP BY groups rows for aggregate calculations (COUNT, SUM, AVG, etc.)."),
+            ("HAVING filters:", ["Individual rows", "Columns", "Groups after GROUP BY", "Tables"], "Groups after GROUP BY", "HAVING filters groups created by GROUP BY, unlike WHERE which filters rows."),
+            ("INNER JOIN returns:", ["All rows from both tables", "Only matching rows from both", "All from left, matched from right", "Cartesian product"], "Only matching rows from both", "INNER JOIN returns only rows with matches in both tables."),
+            ("LEFT JOIN returns:", ["Only matching rows", "All left rows + matching right rows", "All right rows + matching left rows", "Cartesian product"], "All left rows + matching right rows", "LEFT JOIN preserves all left table rows, NULLs for unmatched right rows."),
+            ("COUNT(*) vs COUNT(column):", ["They're identical", "COUNT(*) includes NULLs, COUNT(col) doesn't", "COUNT(col) is faster", "COUNT(*) counts columns"], "COUNT(*) includes NULLs, COUNT(col) doesn't", "COUNT(*) counts all rows. COUNT(column) counts only non-NULL values."),
+            ("DISTINCT removes:", ["NULL values", "Duplicate rows", "Empty strings", "Foreign keys"], "Duplicate rows", "DISTINCT eliminates duplicate rows from the result set."),
+            ("SQL execution order starts with:", ["SELECT", "FROM", "WHERE", "ORDER BY"], "FROM", "Logical execution: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT."),
+            ("A subquery in WHERE is called:", ["An inline view", "A scalar subquery", "A nested subquery", "A derived table"], "A nested subquery", "Subqueries in the WHERE clause are commonly called nested subqueries."),
+            ("A correlated subquery:", ["Runs once", "References the outer query", "Is always faster", "Cannot use WHERE"], "References the outer query", "A correlated subquery references columns from the outer query, running once per outer row."),
+            ("UNION vs UNION ALL:", ["UNION keeps duplicates", "UNION ALL removes duplicates", "UNION removes duplicates, UNION ALL keeps them", "They're identical"], "UNION removes duplicates, UNION ALL keeps them", "UNION deduplicates results. UNION ALL is faster by keeping all rows."),
+            ("LIKE '%son' matches:", ["Names starting with 'son'", "Names ending with 'son'", "Names containing 'son'", "Exact match 'son'"], "Names ending with 'son'", "% matches any sequence of characters. '%son' matches anything ending in 'son'."),
+            ("BETWEEN 10 AND 20 is:", ["Exclusive on both ends", "Inclusive on both ends", "Inclusive start, exclusive end", "Exclusive start, inclusive end"], "Inclusive on both ends", "BETWEEN is inclusive: it includes both boundary values."),
+            ("IS NULL is needed because:", ["NULL = NULL returns TRUE", "= NULL doesn't work correctly", "NULL is a string", "NULL equals zero"], "= NULL doesn't work correctly", "NULL comparisons with = return UNKNOWN, not TRUE. Must use IS NULL."),
+            ("COALESCE(NULL, NULL, 'hello') returns:", ["NULL", "hello", "Error", "Empty string"], "hello", "COALESCE returns the first non-NULL value from its arguments."),
+            ("INSERT INTO ... SELECT:", ["Creates a new table", "Inserts query results into a table", "Selects from an insert", "Is not valid SQL"], "Inserts query results into a table", "INSERT INTO ... SELECT copies rows from a query result into an existing table."),
+            ("A CASE expression provides:", ["Looping", "Conditional logic (if-then-else)", "Table creation", "Transaction control"], "Conditional logic (if-then-else)", "CASE provides if-then-else logic within SQL queries."),
+            ("CROSS JOIN produces:", ["Only matching rows", "Cartesian product of all rows", "Unique rows only", "NULL rows"], "Cartesian product of all rows", "CROSS JOIN combines every row from table A with every row from table B."),
+            ("A derived table appears in:", ["WHERE clause", "FROM clause", "HAVING clause", "ORDER BY clause"], "FROM clause", "A derived table is a subquery in the FROM clause, acting as a temporary table."),
+            ("EXCEPT/MINUS returns:", ["All rows from both queries", "Rows in first query but not second", "Rows in both queries", "Duplicate rows"], "Rows in first query but not second", "EXCEPT returns rows from the first result set that don't appear in the second."),
+            ("Aggregate functions handle NULLs by:", ["Treating them as zero", "Ignoring them (except COUNT(*))", "Causing errors", "Converting to empty strings"], "Ignoring them (except COUNT(*))", "SUM, AVG, MIN, MAX all skip NULL values. COUNT(*) counts all rows."),
+            ("FULL OUTER JOIN returns:", ["Only matching rows", "All rows from both tables", "All from left only", "All from right only"], "All rows from both tables", "FULL OUTER JOIN returns all rows from both tables, NULLs where no match."),
+            ("What does EXISTS do?", ["Checks if a table exists", "Returns TRUE if subquery has results", "Creates a table if needed", "Checks column existence"], "Returns TRUE if subquery has results", "EXISTS returns TRUE if the subquery returns at least one row."),
+        ]
+        for q in dmlQ {
+            context.insert(QuizQuestion(type: .multipleChoice, text: q.0, options: q.1, correctAnswer: q.2, explanation: q.3, topic: dml))
+        }
+
+        // --- Models Quizzes (25+) ---
+        let modelQ: [(String, [String], String, String)] = [
+            ("The conceptual model focuses on:", ["Physical storage", "DBMS-specific details", "High-level entities and relationships", "Indexes and partitions"], "High-level entities and relationships", "Conceptual models capture business concepts without implementation details."),
+            ("The logical model includes:", ["Storage details", "Attributes, keys, and normalized structure", "Disk partitions", "Buffer pool settings"], "Attributes, keys, and normalized structure", "Logical models detail the structure (attributes, keys, relationships) independently of any DBMS."),
+            ("The physical model includes:", ["Business requirements only", "Entity names only", "DBMS-specific implementation details", "User stories"], "DBMS-specific implementation details", "Physical models specify data types, indexes, tablespaces for a specific DBMS."),
+            ("The three-schema architecture has:", ["External, Conceptual, Internal", "User, Admin, System", "Table, View, Index", "Read, Write, Execute"], "External, Conceptual, Internal", "ANSI/SPARC: External (user views), Conceptual (community), Internal (physical)."),
+            ("Physical data independence means:", ["Changing storage without affecting logical schema", "Changing tables without affecting queries", "Changing the DBMS", "Changing business rules"], "Changing storage without affecting logical schema", "Physical data independence: storage changes don't affect the conceptual/logical schema."),
+            ("Logical data independence means:", ["Changing storage without affecting users", "Changing conceptual schema without affecting external views", "Changing the DBMS vendor", "Physical reorganization"], "Changing conceptual schema without affecting external views", "Logical data independence: conceptual schema changes don't affect external schemas/apps."),
+            ("Which data independence is harder to achieve?", ["Physical", "Logical", "Both are equally hard", "Neither is hard"], "Logical", "Logical data independence is harder because schema changes more likely affect applications."),
+            ("The external schema describes:", ["Physical storage", "The entire database", "A particular user's view", "System metadata"], "A particular user's view", "External schemas describe the relevant portion of the database for specific users/apps."),
+            ("The internal schema describes:", ["User views", "Physical data storage", "Business rules", "Application logic"], "Physical data storage", "Internal schema details how data is physically stored — files, indexes, access paths."),
+            ("OLTP systems are optimized for:", ["Complex analytical queries", "Many short transactions", "Data warehousing", "Batch processing"], "Many short transactions", "OLTP handles high volumes of short, fast transactions (inserts, updates, reads)."),
+            ("OLAP systems are optimized for:", ["Fast inserts", "Complex analytical queries", "Transaction processing", "Data entry"], "Complex analytical queries", "OLAP supports complex queries for business intelligence and analysis."),
+            ("A star schema has:", ["Normalized dimensions", "A central fact table with dimension tables", "No fact tables", "Only one table"], "A central fact table with dimension tables", "Star schema: central fact table surrounded by denormalized dimension tables."),
+            ("A snowflake schema differs from star schema by:", ["Having no fact table", "Having normalized dimension tables", "Having no dimensions", "Being fully denormalized"], "Having normalized dimension tables", "Snowflake normalizes dimension tables into sub-dimensions."),
+            ("A data dictionary stores:", ["User data", "Metadata about the database", "Backup files", "Query results"], "Metadata about the database", "Data dictionary: centralized repository of metadata (table/column info, constraints, etc.)."),
+            ("Forward engineering means:", ["Creating a model from an existing DB", "Creating a DB from a model", "Reverse-engineering code", "Migrating data"], "Creating a DB from a model", "Forward engineering goes from design (model) to implementation (physical database)."),
+            ("Reverse engineering means:", ["Creating a model from a design", "Creating a model from an existing DB", "Deleting a database", "Writing queries"], "Creating a model from an existing DB", "Reverse engineering extracts a logical/conceptual model from an existing physical database."),
+            ("A fact table contains:", ["Only dimension keys", "Measurable quantities and FK to dimensions", "Only text descriptions", "User credentials"], "Measurable quantities and FK to dimensions", "Fact tables store metrics/measures (sales amount, quantity) and FK references to dimensions."),
+            ("A dimension table contains:", ["Numeric measures", "Descriptive attributes for filtering/grouping", "Only foreign keys", "Transaction logs"], "Descriptive attributes for filtering/grouping", "Dimension tables have descriptive attributes (name, category, date) used to analyze facts."),
+            ("Metadata is:", ["User-entered data", "Data about data", "Encrypted data", "Deleted data"], "Data about data", "Metadata describes the structure, format, and constraints of the actual data."),
+            ("A domain constraint restricts:", ["Table relationships", "Allowable values for an attribute", "Number of tables", "Query speed"], "Allowable values for an attribute", "Domain constraints limit values based on data type, range, or valid set."),
+            ("The hierarchical data model organizes data as:", ["Tables", "Trees with parent-child relationships", "Graphs", "Key-value pairs"], "Trees with parent-child relationships", "Hierarchical model: tree structure where each child has exactly one parent."),
+            ("The network data model differs from hierarchical by:", ["Using tables", "Allowing multiple parents per child", "Having no relationships", "Using SQL"], "Allowing multiple parents per child", "Network model forms a graph — children can have multiple parents."),
+            ("A schema diagram shows:", ["Query results", "Tables, columns, keys, and relationships", "Physical disk layout", "Network topology"], "Tables, columns, keys, and relationships", "Schema diagrams visually represent the database structure."),
+            ("An instance of a database is:", ["Its structure definition", "The actual data at a point in time", "Its backup", "Its documentation"], "The actual data at a point in time", "Instance = the data content at a specific moment. Schema = the structure."),
+            ("Business rules translate to:", ["Views only", "Database constraints and application logic", "Indexes only", "Storage settings"], "Database constraints and application logic", "Business rules become CHECK constraints, triggers, FK rules, and application code."),
+        ]
+        for q in modelQ {
+            context.insert(QuizQuestion(type: .multipleChoice, text: q.0, options: q.1, correctAnswer: q.2, explanation: q.3, topic: models))
+        }
+
+        // --- DBMS Architecture Quizzes (25+) ---
+        let dbmsQ: [(String, [String], String, String)] = [
+            ("ACID stands for:", ["Access, Control, Insert, Delete", "Atomicity, Consistency, Isolation, Durability", "Add, Create, Index, Drop", "Authorize, Commit, Isolate, Duplicate"], "Atomicity, Consistency, Isolation, Durability", "ACID properties ensure reliable database transactions."),
+            ("Atomicity ensures:", ["Data is encrypted", "A transaction is all-or-nothing", "Data is consistent", "Transactions are fast"], "A transaction is all-or-nothing", "Atomicity: either all operations in a transaction succeed, or none do."),
+            ("Durability ensures:", ["Fast queries", "Committed changes survive failures", "Transactions are isolated", "Data is normalized"], "Committed changes survive failures", "Durability: once committed, changes persist even after crashes."),
+            ("COMMIT does what?", ["Undoes changes", "Makes transaction changes permanent", "Creates a savepoint", "Locks a table"], "Makes transaction changes permanent", "COMMIT finalizes all changes made during the current transaction."),
+            ("ROLLBACK does what?", ["Saves changes", "Undoes uncommitted changes", "Commits automatically", "Creates a backup"], "Undoes uncommitted changes", "ROLLBACK reverts the database to the state before the transaction began."),
+            ("A deadlock occurs when:", ["A query is slow", "Two transactions wait for each other's locks", "The database crashes", "A table is dropped"], "Two transactions wait for each other's locks", "Deadlock: circular wait where transactions block each other indefinitely."),
+            ("A shared lock allows:", ["Only writes", "Multiple concurrent reads", "Only one reader", "No access"], "Multiple concurrent reads", "Shared (read) locks allow multiple transactions to read simultaneously."),
+            ("An exclusive lock allows:", ["Multiple readers", "Only one transaction to read/write", "No transactions", "Unlimited writes"], "Only one transaction to read/write", "Exclusive (write) locks give sole access to one transaction."),
+            ("The query optimizer:", ["Writes SQL for you", "Finds the most efficient execution plan", "Creates tables", "Manages users"], "Finds the most efficient execution plan", "The optimizer analyzes different strategies to find the cheapest execution plan."),
+            ("A B-tree index is good for:", ["Only equality lookups", "Range and equality queries", "Only full table scans", "Storing BLOBs"], "Range and equality queries", "B-trees maintain sorted order, supporting both equality and range searches efficiently."),
+            ("A hash index is best for:", ["Range queries", "Equality lookups", "Sorting", "Full-text search"], "Equality lookups", "Hash indexes map keys to locations — excellent for = but useless for < > ranges."),
+            ("A clustered index:", ["Is separate from data", "Physically reorders data rows", "Can have many per table", "Is always a hash index"], "Physically reorders data rows", "Clustered indexes sort the actual data rows — only one per table."),
+            ("Write-ahead log (WAL) ensures:", ["Faster queries", "Changes logged before applied to DB", "Automatic backups", "Index creation"], "Changes logged before applied to DB", "WAL writes changes to a log first, enabling recovery if a crash occurs."),
+            ("A checkpoint:", ["Deletes old data", "Writes buffered changes to disk", "Creates a new database", "Drops indexes"], "Writes buffered changes to disk", "Checkpoints flush modified pages to disk and record progress in the log."),
+            ("READ UNCOMMITTED isolation allows:", ["No reads", "Dirty reads", "Only committed reads", "Serializable access"], "Dirty reads", "READ UNCOMMITTED lets transactions read uncommitted data from others."),
+            ("SERIALIZABLE isolation:", ["Is the fastest", "Provides the highest consistency", "Allows dirty reads", "Has no locking"], "Provides the highest consistency", "SERIALIZABLE provides the strongest isolation — equivalent to serial execution."),
+            ("A dirty read is:", ["Reading corrupted data", "Reading uncommitted data", "Reading from a view", "Reading NULL values"], "Reading uncommitted data", "A dirty read accesses data modified by an uncommitted transaction."),
+            ("A phantom read is:", ["Reading NULL", "Finding new rows in a re-executed query", "Reading deleted rows", "A dirty read"], "Finding new rows in a re-executed query", "Phantom reads occur when new rows appear between two executions of the same query."),
+            ("A stored procedure is:", ["A temporary table", "A precompiled set of SQL statements", "An index type", "A constraint"], "A precompiled set of SQL statements", "Stored procedures are named, compiled SQL programs stored in the database."),
+            ("A trigger executes:", ["Manually by user", "Automatically in response to table events", "Only at startup", "When the database is backed up"], "Automatically in response to table events", "Triggers fire automatically on INSERT, UPDATE, or DELETE events."),
+            ("GRANT is used to:", ["Create tables", "Give permissions to users", "Delete users", "Create indexes"], "Give permissions to users", "GRANT assigns privileges (SELECT, INSERT, etc.) on objects to users/roles."),
+            ("SQL injection is prevented by:", ["Using SELECT *", "Parameterized queries", "Disabling indexes", "Using views"], "Parameterized queries", "Parameterized queries separate SQL code from user input, preventing injection."),
+            ("The buffer pool/manager:", ["Stores user passwords", "Caches database pages in memory", "Creates backups", "Manages user sessions"], "Caches database pages in memory", "Buffer manager caches frequently accessed pages in RAM to reduce disk I/O."),
+            ("Two-phase locking has:", ["Lock and unlock phases", "Growing and shrinking phases", "Read and write phases", "Commit and rollback phases"], "Growing and shrinking phases", "2PL: growing phase (acquire locks), shrinking phase (release locks). Ensures serializability."),
+            ("Advantages of a DBMS include:", ["More complexity and cost", "Data independence, integrity, concurrent access", "Slower than file systems", "Requires no training"], "Data independence, integrity, concurrent access", "DBMS provides centralized control, data integrity, concurrent access, security, and recovery."),
+        ]
+        for q in dbmsQ {
+            context.insert(QuizQuestion(type: .multipleChoice, text: q.0, options: q.1, correctAnswer: q.2, explanation: q.3, topic: dbms))
+        }
+    }
+
+    // MARK: - Glossary
+    private static func seedGlossary(context: ModelContext) {
+        let terms: [(String, String, String)] = [
+            ("Relation", "A two-dimensional table of rows and columns in the relational model.", "Relational Model"),
+            ("Tuple", "A single row in a relation representing one record.", "Relational Model"),
+            ("Attribute", "A named column in a relation representing a property.", "Relational Model"),
+            ("Domain", "The set of all allowable values for an attribute.", "Relational Model"),
+            ("Degree", "The number of attributes (columns) in a relation.", "Relational Model"),
+            ("Cardinality", "The number of tuples (rows) in a relation, or the max instances in a relationship.", "Relational Model"),
+            ("Primary Key", "A column (or set of columns) that uniquely identifies each row in a table. Cannot be NULL.", "Keys"),
+            ("Foreign Key", "A column that references the primary key of another table to establish a relationship.", "Keys"),
+            ("Candidate Key", "A minimal superkey — a set of attributes that uniquely identifies rows with no redundancy.", "Keys"),
+            ("Superkey", "Any set of attributes that uniquely identifies tuples in a relation.", "Keys"),
+            ("Composite Key", "A key consisting of two or more attributes.", "Keys"),
+            ("Surrogate Key", "A system-generated artificial key with no business meaning.", "Keys"),
+            ("Natural Key", "A key derived from real-world data with inherent meaning (e.g., SSN).", "Keys"),
+            ("Alternate Key", "A candidate key not chosen as the primary key.", "Keys"),
+            ("Entity", "An object or concept about which data is stored, represented as a rectangle in ER diagrams.", "ER Diagrams"),
+            ("Weak Entity", "An entity that depends on a strong entity for identification, shown with double borders.", "ER Diagrams"),
+            ("Strong Entity", "An entity that exists independently with its own primary key.", "ER Diagrams"),
+            ("Relationship", "An association between entities, shown as a diamond in Chen notation.", "ER Diagrams"),
+            ("Crow's Foot Notation", "A popular ER notation using fork symbols for 'many' and lines for 'one'.", "ER Diagrams"),
+            ("Chen Notation", "The original ER notation using rectangles, diamonds, and ovals.", "ER Diagrams"),
+            ("Participation Constraint", "Whether entity participation is total (mandatory) or partial (optional).", "ER Diagrams"),
+            ("Total Participation", "Every instance must participate in the relationship (double line).", "ER Diagrams"),
+            ("Partial Participation", "Some instances may not participate (single line).", "ER Diagrams"),
+            ("Associative Entity", "A junction table that resolves an M:N relationship.", "ER Diagrams"),
+            ("Generalization", "Combining entity types with common attributes into a supertype.", "ER Diagrams"),
+            ("Specialization", "Dividing a supertype entity into subtypes based on characteristics.", "ER Diagrams"),
+            ("1NF (First Normal Form)", "All attribute values must be atomic — no repeating groups or multivalued attributes.", "Normalization"),
+            ("2NF (Second Normal Form)", "In 1NF with no partial dependencies on the primary key.", "Normalization"),
+            ("3NF (Third Normal Form)", "In 2NF with no transitive dependencies on the primary key.", "Normalization"),
+            ("BCNF (Boyce-Codd Normal Form)", "Every determinant in the relation is a superkey.", "Normalization"),
+            ("Functional Dependency", "A relationship where one attribute uniquely determines another (X → Y).", "Normalization"),
+            ("Partial Dependency", "A non-key attribute depends on only part of a composite primary key.", "Normalization"),
+            ("Transitive Dependency", "A non-key attribute depends on another non-key attribute.", "Normalization"),
+            ("Insertion Anomaly", "Inability to add data because other required data is missing.", "Normalization"),
+            ("Update Anomaly", "Inconsistency from updating redundant data in some but not all locations.", "Normalization"),
+            ("Deletion Anomaly", "Unintended loss of data when a row containing the only copy is deleted.", "Normalization"),
+            ("Denormalization", "Intentionally adding redundancy to improve read performance.", "Normalization"),
+            ("Determinant", "The attribute(s) on the left side of a functional dependency.", "Normalization"),
+            ("DDL (Data Definition Language)", "SQL commands that define structure: CREATE, ALTER, DROP, TRUNCATE.", "SQL"),
+            ("DML (Data Manipulation Language)", "SQL commands that manipulate data: SELECT, INSERT, UPDATE, DELETE.", "SQL"),
+            ("CREATE TABLE", "DDL command to create a new table with specified columns and constraints.", "SQL"),
+            ("ALTER TABLE", "DDL command to modify an existing table's structure.", "SQL"),
+            ("DROP TABLE", "DDL command to permanently remove a table and its data.", "SQL"),
+            ("SELECT", "DML command to retrieve data from one or more tables.", "SQL"),
+            ("INSERT", "DML command to add new rows to a table.", "SQL"),
+            ("UPDATE", "DML command to modify existing data in a table.", "SQL"),
+            ("DELETE", "DML command to remove rows from a table.", "SQL"),
+            ("JOIN", "Combines rows from two or more tables based on a related column.", "SQL"),
+            ("INNER JOIN", "Returns only rows with matching values in both tables.", "SQL"),
+            ("LEFT JOIN", "Returns all rows from the left table plus matching right table rows.", "SQL"),
+            ("Subquery", "A query nested inside another query.", "SQL"),
+            ("Aggregate Function", "A function that performs a calculation on a set of values: COUNT, SUM, AVG, MIN, MAX.", "SQL"),
+            ("GROUP BY", "Groups rows sharing values for aggregate calculations.", "SQL"),
+            ("HAVING", "Filters groups created by GROUP BY based on aggregate conditions.", "SQL"),
+            ("VIEW", "A virtual table defined by a SQL query over base tables.", "SQL"),
+            ("INDEX", "A data structure that improves the speed of data retrieval.", "SQL"),
+            ("CONSTRAINT", "A rule enforced on data: NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, CHECK, DEFAULT.", "SQL"),
+            ("DBMS", "Database Management System — software for creating, managing, and querying databases.", "DBMS"),
+            ("ACID Properties", "Atomicity, Consistency, Isolation, Durability — guarantees for reliable transactions.", "DBMS"),
+            ("Transaction", "A logical unit of work consisting of one or more operations treated as atomic.", "DBMS"),
+            ("COMMIT", "Makes all changes in the current transaction permanent.", "DBMS"),
+            ("ROLLBACK", "Undoes all changes made in the current transaction.", "DBMS"),
+            ("Deadlock", "A situation where two transactions wait for each other's locks indefinitely.", "DBMS"),
+            ("Concurrency Control", "Mechanisms managing simultaneous access to prevent conflicts.", "DBMS"),
+            ("Lock", "A mechanism restricting data access to prevent conflicts between transactions.", "DBMS"),
+            ("Isolation Level", "Degree to which concurrent transactions are isolated: READ UNCOMMITTED to SERIALIZABLE.", "DBMS"),
+            ("Query Optimizer", "DBMS component that determines the most efficient query execution plan.", "DBMS"),
+            ("Buffer Pool", "Main memory area caching database pages to reduce disk I/O.", "DBMS"),
+            ("Stored Procedure", "A precompiled set of SQL statements stored in the database.", "DBMS"),
+            ("Trigger", "A stored procedure that executes automatically on INSERT, UPDATE, or DELETE events.", "DBMS"),
+            ("Write-Ahead Log", "Recovery technique logging changes before applying them to the database.", "DBMS"),
+            ("Conceptual Model", "High-level data model showing entities and relationships without implementation details.", "Data Models"),
+            ("Logical Model", "Detailed data structure with attributes, keys, and normalization, DBMS-independent.", "Data Models"),
+            ("Physical Model", "Implementation-specific design with data types, indexes, and storage settings.", "Data Models"),
+            ("Three-Schema Architecture", "ANSI/SPARC architecture: External, Conceptual, and Internal schemas.", "Data Models"),
+            ("Data Independence", "Ability to change one schema level without affecting others.", "Data Models"),
+            ("Schema", "The structural definition of a database — tables, columns, types, constraints.", "Data Models"),
+            ("Instance", "The actual data in a database at a particular point in time.", "Data Models"),
+            ("Data Dictionary", "A repository of metadata describing database objects.", "Data Models"),
+            ("OLTP", "Online Transaction Processing — optimized for many short transactions.", "Data Models"),
+            ("OLAP", "Online Analytical Processing — optimized for complex analytical queries.", "Data Models"),
+            ("Star Schema", "Data warehouse design with a central fact table surrounded by dimensions.", "Data Models"),
+            ("Snowflake Schema", "Star schema variant with normalized dimension tables.", "Data Models"),
+            ("Referential Integrity", "Rule that foreign key values must match existing primary keys or be NULL.", "Keys"),
+            ("CASCADE", "Referential action that propagates deletes/updates to referencing rows.", "Keys"),
+            ("Entity Integrity", "Rule that no primary key attribute may be NULL.", "Keys"),
+            ("SQL Injection", "Security attack inserting malicious SQL through application inputs.", "DBMS"),
+            ("B-Tree Index", "Balanced tree structure for efficient search, insert, and delete operations.", "DBMS"),
+            ("Clustered Index", "An index that physically reorders table data — one per table.", "DBMS"),
+            ("Normalization", "Process of organizing data to reduce redundancy and improve integrity.", "Normalization"),
+            ("Lossless Decomposition", "Decomposition where the original relation can be perfectly reconstructed.", "Normalization"),
+        ]
+        for t in terms {
+            context.insert(GlossaryTerm(term: t.0, definition: t.1, category: t.2))
+        }
+    }
+
+    // MARK: - Sample Databases
+    private static func seedSampleDatabases(context: ModelContext) {
+        // 1. University Database
+        context.insert(SampleDatabase(
+            name: "University",
+            description: "A university database with students, courses, enrollments, departments, and professors.",
+            schemaSQL: """
+            CREATE TABLE department (dept_id INTEGER PRIMARY KEY, dept_name TEXT NOT NULL, building TEXT, budget REAL);
+            CREATE TABLE professor (prof_id INTEGER PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL, dept_id INTEGER REFERENCES department(dept_id), hire_date TEXT);
+            CREATE TABLE student (student_id INTEGER PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT UNIQUE, gpa REAL, major_dept_id INTEGER REFERENCES department(dept_id), enrollment_year INTEGER);
+            CREATE TABLE course (course_id INTEGER PRIMARY KEY, course_name TEXT NOT NULL, credits INTEGER, dept_id INTEGER REFERENCES department(dept_id), prof_id INTEGER REFERENCES professor(prof_id));
+            CREATE TABLE enrollment (student_id INTEGER, course_id INTEGER, grade TEXT, semester TEXT, PRIMARY KEY(student_id, course_id), FOREIGN KEY(student_id) REFERENCES student(student_id), FOREIGN KEY(course_id) REFERENCES course(course_id));
+            CREATE TABLE prerequisite (course_id INTEGER, prereq_id INTEGER, PRIMARY KEY(course_id, prereq_id), FOREIGN KEY(course_id) REFERENCES course(course_id), FOREIGN KEY(prereq_id) REFERENCES course(course_id));
+            """,
+            sampleDataSQL: """
+            INSERT INTO department VALUES (1,'Computer Science','Tech Hall',500000),(2,'Mathematics','Science Bldg',300000),(3,'English','Liberal Arts',200000),(4,'Physics','Science Bldg',400000),(5,'Business','Commerce Hall',350000);
+            INSERT INTO professor VALUES (1,'Alan','Turing',1,'2020-01-15'),(2,'Ada','Lovelace',1,'2019-08-20'),(3,'Isaac','Newton',4,'2018-03-10'),(4,'William','Shakespeare',3,'2021-06-01'),(5,'John','Nash',2,'2017-09-15'),(6,'Grace','Hopper',1,'2016-01-20'),(7,'Marie','Curie',4,'2019-11-05');
+            INSERT INTO student VALUES (1,'Alice','Johnson','alice@uni.edu',3.8,1,2022),(2,'Bob','Smith','bob@uni.edu',3.2,1,2021),(3,'Carol','Williams','carol@uni.edu',3.9,2,2023),(4,'David','Brown','david@uni.edu',2.8,5,2022),(5,'Eve','Davis','eve@uni.edu',3.5,3,2021),(6,'Frank','Miller','frank@uni.edu',3.1,4,2023),(7,'Grace','Wilson','grace@uni.edu',3.7,2,2022),(8,'Hank','Taylor','hank@uni.edu',2.9,5,2021),(9,'Ivy','Anderson','ivy@uni.edu',3.6,1,2023),(10,'Jack','Thomas','jack@uni.edu',3.4,4,2022);
+            INSERT INTO course VALUES (1,'Intro to Programming',3,1,1),(2,'Data Structures',4,1,2),(3,'Calculus I',4,2,5),(4,'Linear Algebra',3,2,5),(5,'English Composition',3,3,4),(6,'Physics I',4,4,3),(7,'Database Systems',3,1,6),(8,'Algorithms',4,1,2),(9,'Statistics',3,2,5),(10,'Business Ethics',3,5,NULL);
+            INSERT INTO enrollment VALUES (1,1,'A','Fall 2022'),(1,2,'B+','Spring 2023'),(1,7,'A-','Fall 2023'),(2,1,'B','Fall 2021'),(2,3,'C+','Spring 2022'),(3,3,'A','Fall 2023'),(3,4,'A-','Fall 2023'),(4,10,'B','Fall 2022'),(4,5,'B+','Spring 2023'),(5,5,'A','Fall 2021'),(6,6,'B','Fall 2023'),(7,3,'A','Fall 2022'),(7,9,'B+','Spring 2023'),(8,10,'C','Fall 2021'),(9,1,'A','Fall 2023'),(9,7,'B+','Fall 2023'),(10,6,'A-','Fall 2022');
+            INSERT INTO prerequisite VALUES (2,1),(8,2),(8,3),(4,3),(7,1);
+            """,
+            iconName: "graduationcap.fill"
+        ))
+
+        // 2. Sales Database
+        context.insert(SampleDatabase(
+            name: "Sales",
+            description: "A retail sales database with customers, products, orders, and categories.",
+            schemaSQL: """
+            CREATE TABLE category (category_id INTEGER PRIMARY KEY, category_name TEXT NOT NULL, description TEXT);
+            CREATE TABLE product (product_id INTEGER PRIMARY KEY, product_name TEXT NOT NULL, category_id INTEGER REFERENCES category(category_id), unit_price REAL NOT NULL, stock_quantity INTEGER DEFAULT 0);
+            CREATE TABLE customer (customer_id INTEGER PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT UNIQUE, city TEXT, state TEXT, join_date TEXT);
+            CREATE TABLE orders (order_id INTEGER PRIMARY KEY, customer_id INTEGER REFERENCES customer(customer_id), order_date TEXT NOT NULL, total_amount REAL, status TEXT DEFAULT 'pending');
+            CREATE TABLE order_item (order_id INTEGER, product_id INTEGER, quantity INTEGER NOT NULL, unit_price REAL NOT NULL, PRIMARY KEY(order_id, product_id), FOREIGN KEY(order_id) REFERENCES orders(order_id), FOREIGN KEY(product_id) REFERENCES product(product_id));
+            CREATE TABLE supplier (supplier_id INTEGER PRIMARY KEY, supplier_name TEXT NOT NULL, contact_email TEXT, city TEXT);
+            CREATE TABLE product_supplier (product_id INTEGER, supplier_id INTEGER, supply_price REAL, PRIMARY KEY(product_id, supplier_id), FOREIGN KEY(product_id) REFERENCES product(product_id), FOREIGN KEY(supplier_id) REFERENCES supplier(supplier_id));
+            """,
+            sampleDataSQL: """
+            INSERT INTO category VALUES (1,'Electronics','Devices and gadgets'),(2,'Books','Physical and digital books'),(3,'Clothing','Apparel and accessories'),(4,'Home','Home and garden items'),(5,'Sports','Sports equipment');
+            INSERT INTO product VALUES (1,'Laptop',1,999.99,50),(2,'Smartphone',1,699.99,120),(3,'Headphones',1,149.99,200),(4,'SQL Textbook',2,59.99,80),(5,'Database Design Guide',2,45.99,60),(6,'Running Shoes',5,89.99,150),(7,'Desk Lamp',4,34.99,90),(8,'T-Shirt',3,19.99,300),(9,'Tablet',1,449.99,75),(10,'Backpack',5,65.99,100);
+            INSERT INTO customer VALUES (1,'John','Doe','john@email.com','New York','NY','2023-01-15'),(2,'Jane','Smith','jane@email.com','Los Angeles','CA','2023-02-20'),(3,'Mike','Johnson','mike@email.com','Chicago','IL','2023-03-10'),(4,'Sarah','Williams','sarah@email.com','Houston','TX','2023-04-05'),(5,'Tom','Brown','tom@email.com','Phoenix','AZ','2023-05-12'),(6,'Lisa','Davis','lisa@email.com','New York','NY','2023-06-18'),(7,'Chris','Miller','chris@email.com','Seattle','WA','2023-07-22'),(8,'Amy','Wilson','amy@email.com','Denver','CO','2023-08-30');
+            INSERT INTO orders VALUES (1,1,'2024-01-15',1149.98,'completed'),(2,2,'2024-01-20',699.99,'completed'),(3,3,'2024-02-01',209.98,'completed'),(4,1,'2024-02-14',59.99,'completed'),(5,4,'2024-03-01',89.99,'shipped'),(6,5,'2024-03-10',1449.98,'shipped'),(7,6,'2024-03-15',19.99,'pending'),(8,7,'2024-03-20',514.98,'pending');
+            INSERT INTO order_item VALUES (1,1,1,999.99),(1,3,1,149.99),(2,2,1,699.99),(3,3,1,149.99),(3,4,1,59.99),(4,4,1,59.99),(5,6,1,89.99),(6,1,1,999.99),(6,9,1,449.99),(7,8,1,19.99),(8,9,1,449.99),(8,10,1,65.99);
+            INSERT INTO supplier VALUES (1,'TechCorp','tech@supply.com','Shenzhen'),(2,'BookWorld','books@supply.com','New York'),(3,'FashionHub','fashion@supply.com','Milan'),(4,'HomeGoods Inc','home@supply.com','Dallas');
+            INSERT INTO product_supplier VALUES (1,1,750.00),(2,1,500.00),(3,1,80.00),(4,2,30.00),(5,2,25.00),(7,4,18.00),(8,3,8.00),(9,1,320.00);
+            """,
+            iconName: "cart.fill"
+        ))
+
+        // 3. Hospital Database
+        context.insert(SampleDatabase(
+            name: "Hospital",
+            description: "A hospital database with patients, doctors, appointments, departments, and prescriptions.",
+            schemaSQL: """
+            CREATE TABLE department (dept_id INTEGER PRIMARY KEY, dept_name TEXT NOT NULL, floor_number INTEGER, phone TEXT);
+            CREATE TABLE doctor (doctor_id INTEGER PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL, specialization TEXT, dept_id INTEGER REFERENCES department(dept_id), hire_date TEXT);
+            CREATE TABLE patient (patient_id INTEGER PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL, date_of_birth TEXT, gender TEXT, phone TEXT, insurance_id TEXT);
+            CREATE TABLE appointment (appt_id INTEGER PRIMARY KEY, patient_id INTEGER REFERENCES patient(patient_id), doctor_id INTEGER REFERENCES doctor(doctor_id), appt_date TEXT NOT NULL, appt_time TEXT, reason TEXT, status TEXT DEFAULT 'scheduled');
+            CREATE TABLE prescription (rx_id INTEGER PRIMARY KEY, appt_id INTEGER REFERENCES appointment(appt_id), medication TEXT NOT NULL, dosage TEXT, duration_days INTEGER, instructions TEXT);
+            CREATE TABLE room (room_id INTEGER PRIMARY KEY, room_number TEXT NOT NULL, dept_id INTEGER REFERENCES department(dept_id), room_type TEXT, is_occupied INTEGER DEFAULT 0);
+            CREATE TABLE admission (admission_id INTEGER PRIMARY KEY, patient_id INTEGER REFERENCES patient(patient_id), room_id INTEGER REFERENCES room(room_id), admit_date TEXT, discharge_date TEXT, diagnosis TEXT);
+            """,
+            sampleDataSQL: """
+            INSERT INTO department VALUES (1,'Emergency','1','555-0100'),(2,'Cardiology','3','555-0200'),(3,'Neurology','4','555-0300'),(4,'Pediatrics','2','555-0400'),(5,'Orthopedics','3','555-0500');
+            INSERT INTO doctor VALUES (1,'Sarah','Chen','Emergency Medicine',1,'2018-06-15'),(2,'James','Park','Cardiologist',2,'2015-03-20'),(3,'Emily','Roberts','Neurologist',3,'2019-09-01'),(4,'Michael','Lee','Pediatrician',4,'2020-01-10'),(5,'Rachel','Kim','Orthopedic Surgeon',5,'2017-07-22'),(6,'David','Wang','Cardiologist',2,'2016-11-30');
+            INSERT INTO patient VALUES (1,'Robert','Garcia','1985-03-15','M','555-1001','INS-001'),(2,'Maria','Lopez','1990-07-22','F','555-1002','INS-002'),(3,'James','Taylor','1978-11-30','M','555-1003','INS-003'),(4,'Linda','Martinez','2015-05-10','F','555-1004','INS-004'),(5,'William','Anderson','1965-09-18','M','555-1005','INS-005'),(6,'Jennifer','Thomas','1992-01-25','F','555-1006','INS-006'),(7,'Charles','Jackson','2010-08-14','M','555-1007','INS-007'),(8,'Patricia','White','1988-12-03','F','555-1008','INS-008');
+            INSERT INTO appointment VALUES (1,1,1,'2024-03-15','09:00','Chest pain','completed'),(2,2,2,'2024-03-15','10:30','Heart checkup','completed'),(3,3,3,'2024-03-16','14:00','Headaches','completed'),(4,4,4,'2024-03-17','11:00','Annual checkup','scheduled'),(5,5,5,'2024-03-18','09:30','Knee pain','scheduled'),(6,6,2,'2024-03-18','15:00','Blood pressure','scheduled'),(7,1,1,'2024-03-20','08:00','Follow-up','scheduled'),(8,7,4,'2024-03-20','10:00','Vaccination','scheduled');
+            INSERT INTO prescription VALUES (1,1,'Aspirin','81mg',30,'Take once daily'),(2,1,'Nitroglycerin','0.4mg',14,'As needed for chest pain'),(3,2,'Lisinopril','10mg',90,'Take once daily with food'),(4,3,'Sumatriptan','50mg',10,'Take at onset of headache'),(5,5,'Ibuprofen','400mg',14,'Take with food every 6 hours');
+            INSERT INTO room VALUES (1,'101',1,'Emergency',1),(2,'102',1,'Emergency',0),(3,'301',2,'ICU',1),(4,'302',2,'Standard',0),(5,'401',3,'Standard',0),(6,'201',4,'Pediatric',0),(7,'303',5,'Recovery',0),(8,'304',5,'Standard',1);
+            INSERT INTO admission VALUES (1,1,1,'2024-03-15',NULL,'Acute chest pain'),(2,3,3,'2024-03-16','2024-03-18','Migraine evaluation'),(3,5,8,'2024-03-18',NULL,'Knee surgery prep');
+            """,
+            iconName: "cross.case.fill"
+        ))
+
+        // 4. Employee Database
+        context.insert(SampleDatabase(
+            name: "Employee",
+            description: "A corporate employee database with departments, employees, projects, and assignments.",
+            schemaSQL: """
+            CREATE TABLE department (dept_id INTEGER PRIMARY KEY, dept_name TEXT NOT NULL, location TEXT, manager_id INTEGER);
+            CREATE TABLE employee (emp_id INTEGER PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT UNIQUE, hire_date TEXT, salary REAL, dept_id INTEGER REFERENCES department(dept_id), manager_id INTEGER REFERENCES employee(emp_id));
+            CREATE TABLE project (project_id INTEGER PRIMARY KEY, project_name TEXT NOT NULL, start_date TEXT, end_date TEXT, budget REAL, dept_id INTEGER REFERENCES department(dept_id));
+            CREATE TABLE assignment (emp_id INTEGER, project_id INTEGER, role TEXT, hours_per_week REAL, PRIMARY KEY(emp_id, project_id), FOREIGN KEY(emp_id) REFERENCES employee(emp_id), FOREIGN KEY(project_id) REFERENCES project(project_id));
+            CREATE TABLE dependent (dependent_id INTEGER PRIMARY KEY, emp_id INTEGER REFERENCES employee(emp_id), first_name TEXT NOT NULL, relationship TEXT, date_of_birth TEXT);
+            """,
+            sampleDataSQL: """
+            INSERT INTO department VALUES (1,'Engineering','Building A',1),(2,'Marketing','Building B',4),(3,'Human Resources','Building A',6),(4,'Finance','Building C',8),(5,'Research','Building D',10);
+            INSERT INTO employee VALUES (1,'James','Kirk','kirk@corp.com','2015-01-10',120000,1,NULL),(2,'Spock','Vulcan','spock@corp.com','2016-03-15',110000,1,1),(3,'Uhura','Nyota','uhura@corp.com','2017-06-20',95000,1,1),(4,'Jean','Picard','picard@corp.com','2014-09-01',115000,2,NULL),(5,'Beverly','Crusher','crusher@corp.com','2018-02-14',90000,2,4),(6,'Deanna','Troi','troi@corp.com','2016-11-30',100000,3,NULL),(7,'Worf','Son','worf@corp.com','2019-04-22',85000,3,6),(8,'Data','Android','data@corp.com','2015-07-18',105000,4,NULL),(9,'Geordi','LaForge','laforge@corp.com','2017-10-05',92000,1,1),(10,'Wesley','Crusher','wcrusher@corp.com','2020-01-15',130000,5,NULL);
+            INSERT INTO project VALUES (1,'Warp Drive v2',1,'2024-01-01','2024-12-31',500000,1),(2,'Marketing Campaign Q1','2024-01-01','2024-03-31',100000,2),(3,'HR Portal Redesign','2024-02-01','2024-08-31',200000,3),(4,'Financial Audit System','2024-03-01','2024-09-30',300000,4),(5,'Quantum Research','2024-01-01','2025-12-31',800000,5);
+            INSERT INTO assignment VALUES (1,1,'Lead',20),(2,1,'Developer',35),(3,1,'Developer',30),(5,2,'Coordinator',25),(9,1,'Developer',35),(4,2,'Lead',30),(7,3,'Lead',25),(6,3,'Consultant',15),(8,4,'Lead',30),(10,5,'Lead',40),(2,5,'Researcher',10);
+            INSERT INTO dependent VALUES (1,1,'George','Son','2010-05-20'),(2,1,'Winona','Daughter','2012-08-15'),(3,4,'Rene','Son','2008-03-10'),(4,5,'Wesley','Son','2005-07-22'),(5,6,'Kestra','Daughter','2015-11-30');
+            """,
+            iconName: "person.3.fill"
+        ))
+
+        // 5. Inventory Database
+        context.insert(SampleDatabase(
+            name: "Inventory",
+            description: "A warehouse inventory database with products, warehouses, stock levels, and transfers.",
+            schemaSQL: """
+            CREATE TABLE warehouse (warehouse_id INTEGER PRIMARY KEY, warehouse_name TEXT NOT NULL, city TEXT, state TEXT, capacity INTEGER);
+            CREATE TABLE category (category_id INTEGER PRIMARY KEY, category_name TEXT NOT NULL, parent_category_id INTEGER REFERENCES category(category_id));
+            CREATE TABLE product (product_id INTEGER PRIMARY KEY, product_name TEXT NOT NULL, sku TEXT UNIQUE NOT NULL, category_id INTEGER REFERENCES category(category_id), weight_lbs REAL, unit_cost REAL);
+            CREATE TABLE stock (warehouse_id INTEGER, product_id INTEGER, quantity INTEGER NOT NULL DEFAULT 0, min_quantity INTEGER DEFAULT 10, last_restocked TEXT, PRIMARY KEY(warehouse_id, product_id), FOREIGN KEY(warehouse_id) REFERENCES warehouse(warehouse_id), FOREIGN KEY(product_id) REFERENCES product(product_id));
+            CREATE TABLE transfer (transfer_id INTEGER PRIMARY KEY, from_warehouse INTEGER REFERENCES warehouse(warehouse_id), to_warehouse INTEGER REFERENCES warehouse(warehouse_id), product_id INTEGER REFERENCES product(product_id), quantity INTEGER NOT NULL, transfer_date TEXT, status TEXT DEFAULT 'pending');
+            CREATE TABLE vendor (vendor_id INTEGER PRIMARY KEY, vendor_name TEXT NOT NULL, contact_email TEXT, lead_time_days INTEGER);
+            CREATE TABLE purchase_order (po_id INTEGER PRIMARY KEY, vendor_id INTEGER REFERENCES vendor(vendor_id), product_id INTEGER REFERENCES product(product_id), quantity INTEGER, order_date TEXT, expected_date TEXT, status TEXT DEFAULT 'ordered');
+            """,
+            sampleDataSQL: """
+            INSERT INTO warehouse VALUES (1,'Main Warehouse','Dallas','TX',100000),(2,'East Coast Hub','Newark','NJ',75000),(3,'West Coast Hub','Oakland','CA',80000),(4,'Midwest Center','Chicago','IL',60000);
+            INSERT INTO category VALUES (1,'Electronics',NULL),(2,'Computers',1),(3,'Phones',1),(4,'Accessories',1),(5,'Office Supplies',NULL),(6,'Paper Products',5),(7,'Writing',5);
+            INSERT INTO product VALUES (1,'Laptop Pro 15','SKU-LP15',2,4.5,800.00),(2,'Desktop Tower','SKU-DT01',2,25.0,600.00),(3,'Smartphone X','SKU-SPX',3,0.4,400.00),(4,'USB-C Cable','SKU-USB',4,0.1,5.00),(5,'Wireless Mouse','SKU-WM01',4,0.2,15.00),(6,'Copy Paper','SKU-CP01',6,5.0,25.00),(7,'Printer Ink','SKU-PI01',5,0.5,30.00),(8,'Ballpoint Pens','SKU-BP12',7,0.3,8.00),(9,'Monitor 27in','SKU-M27',2,12.0,350.00),(10,'Phone Case','SKU-PC01',4,0.1,10.00);
+            INSERT INTO stock VALUES (1,1,500,50,'2024-03-01'),(1,2,200,30,'2024-02-15'),(1,3,1000,100,'2024-03-10'),(1,4,5000,500,'2024-03-05'),(2,1,300,50,'2024-02-20'),(2,3,600,100,'2024-03-01'),(2,6,2000,200,'2024-02-28'),(3,1,400,50,'2024-03-05'),(3,3,800,100,'2024-03-08'),(3,5,1500,150,'2024-02-25'),(4,6,3000,300,'2024-03-01'),(4,7,800,80,'2024-02-20'),(4,8,2500,250,'2024-03-10');
+            INSERT INTO transfer VALUES (1,1,2,1,50,'2024-03-15','completed'),(2,1,3,3,200,'2024-03-16','in_transit'),(3,2,4,6,500,'2024-03-17','pending'),(4,3,2,5,300,'2024-03-18','pending');
+            INSERT INTO vendor VALUES (1,'TechSupply Co','orders@techsupply.com',7),(2,'Office Depot','bulk@officedepot.com',3),(3,'Global Electronics','sales@globalelec.com',14);
+            INSERT INTO purchase_order VALUES (1,1,1,200,'2024-03-10','2024-03-17','received'),(2,1,3,500,'2024-03-12','2024-03-19','shipped'),(3,2,6,1000,'2024-03-14','2024-03-17','ordered'),(4,3,9,100,'2024-03-15','2024-03-29','ordered');
+            """,
+            iconName: "shippingbox.fill"
+        ))
+    }
+}
